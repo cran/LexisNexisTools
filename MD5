@@ -1,0 +1,17 @@
+32aa05d5cdf0ef28757bd202f9a139a2 *DESCRIPTION
+79224c6ab187dbb8386397c07924637e *NAMESPACE
+bc0b93db27680dc1b914ee31bfe73675 *R/lnt_checkFiles.R
+89baf0ca74d607cf14a05cc91ef6efdc *R/lnt_read.R
+c9e9d9f029e2e9e9678dc6795ef7acf3 *R/lnt_rename.R
+112cf228002703a4323018cfd56016d2 *R/lnt_sample.R
+3cffe040c0acdd714bea77ca7c20daef *R/lnt_similarity.R
+5710fed421470f10a531c6b368fc787c *R/zzz.R
+9e961d4b71602206780350c288677f6d *README.md
+ea697c06d473bf1513b8aad24240c4ba *inst/CITATION
+5f19e4856b888721575b395347cc867c *inst/extdata/sample.TXT
+77c98ef22920bf47c8e2271da2d6df76 *man/LNToutput-class.Rd
+b91630335ce829cc204c8ce78d2f6770 *man/lnt_checkFiles.Rd
+6b11c0c1589d3f6132a8a41f7942d08d *man/lnt_read.Rd
+197c0eb4bf8e8946700b77b379f87fea *man/lnt_rename.Rd
+d351224c8100379e952b452cc917cfe5 *man/lnt_sample.Rd
+4563934f0061d19ef7619db1cbfddb20 *man/lnt_similarity.Rd
