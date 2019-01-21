@@ -181,7 +181,8 @@ setMethod("+",
 #' articles.df <- LNToutput@articles
 #' paragraphs.df <- LNToutput@paragraphs
 #' @importFrom stringi stri_read_lines stri_extract_last_regex stri_join
-#'   stri_isempty stri_split_fixed stri_replace_all_regex
+#'   stri_isempty stri_split_fixed stri_replace_all_regex stri_detect_regex
+#'   stri_detect_fixed
 #' @importFrom utils tail
 #' @importFrom tibble tibble as_tibble
 lnt_read <- function(x,
@@ -258,15 +259,11 @@ lnt_read <- function(x,
     articles.v[grep("^LOAD-DATE: |^UPDATE: |^GRAFIK: |^GRAPHIC: |^DATELINE: ", articles.v)] <- ""
   }
 
-  beginnings <- grep(start_keyword, articles.v)
-  articles.l <- lapply(seq_along(beginnings), function(n) {
-    if (n < length(beginnings)) {
-      articles.v[beginnings[n]:beginnings[n + 1]]
-    } else {
-      articles.v[beginnings[n]:length(articles.v)]
-    }
-  })
+  articles.l <- split(articles.v, cumsum(stringi::stri_detect_regex(articles.v, start_keyword)))
+  articles.l[["0"]] <- NULL
+  names(articles.l) <- NULL
   rm(articles.v)
+
   df.l <- lapply(articles.l, function(a) {
     len <- grep(length_keyword, a)[1]
     if (!is.na(len)) {
@@ -358,7 +355,7 @@ lnt_read <- function(x,
       d1 <- df.l[[i]]$meta[(date + 1):(date + 2)]
       if (!d1[1] == "") {
         edition.v <- d1[1]
-        if (!d1[2] == "") edition.v <- paste(edition.v, d1[2], collapse = "; ")
+        if (!d1[2] == "") edition.v <- c(edition.v, d1[2])
         edition.v
       } else {
         # Alternatively, the edition is sometimes the first non-empty line in the article
@@ -367,24 +364,41 @@ lnt_read <- function(x,
                           value = TRUE,
                           ignore.case = TRUE)
         ifelse(length(edition.v) == 0,
-               "",
+               NA,
                edition.v)
       }
     } else {
-      ""
+      NA
     }
   })
   if (verbose) cat("\t...editions extracted [", format( (Sys.time() - start_time), digits = 2, nsmall = 2), "]\n", sep = "")
 
   ### Headline
   headline.v <- sapply(seq_along(df.l), function(i) {
-    headline <- df.l[[i]]$meta
-    headline[c(grep(length.v[i], headline, fixed = TRUE),
-               grep(date.v[i], headline, fixed = TRUE),
-               grep(newspaper.v[i], headline, fixed = TRUE),
-               grep(author.v[i], headline, fixed = TRUE),
-               grep(section.v[i], headline, fixed = TRUE))] <- ""
-    stringi::stri_join(headline, collapse = " ")
+    if (!df.l[[i]]$graphic) {
+      headline <- df.l[[i]]$meta
+      pattern <- c(
+        length.v[i],
+        date.v[i],
+        newspaper.v[i],
+        author.v[i],
+        section.v[i],
+        edition.v[i]
+      )
+
+        remove.m <- sapply(pattern, function(p) {
+        out <- stringi::stri_detect_fixed(headline, p[1])
+        if (length(p) > 1) {
+          out + stringi::stri_detect_fixed(headline, p[2])
+        } else {
+          out
+        }
+      })
+      headline[as.logical(rowSums(remove.m, na.rm = TRUE))] <- ""
+      stringi::stri_join(headline, collapse = " ")
+    } else {
+      ""
+    }
   })
   if (verbose) cat("\t...headlines extracted [", format( (Sys.time() - start_time), digits = 2, nsmall = 2), "]\n", sep = "")
 
@@ -409,7 +423,7 @@ lnt_read <- function(x,
                     Length = trimws(length.v, which = "both"),
                     Section = trimws(section.v, which = "both"),
                     Author = trimws(author.v, which = "both"),
-                    Edition = trimws(edition.v, which = "both"),
+                    Edition = trimws(sapply(edition.v, stringi::stri_join, collapse = " "), which = "both"),
                     Headline = trimws(headline.v, which = "both"),
                     Graphic = unlist(sapply(df.l, function(i) i[["graphic"]])))
   if (verbose) cat("\t...metadata extracted [", format( (Sys.time() - start_time), digits = 2, nsmall = 2), "]\n", sep = "")
@@ -782,7 +796,7 @@ lnt_similarity <- function(texts,
       sim <- as.matrix(quanteda::textstat_simil(text.dfm[text.dfm@Dimnames$docs %in%
                                                            IDs[grep(x, dates)]],
                                                 selection = NULL,
-                                                method = "correlation",
+                                                method = "cosine",
                                                 margin = "documents"))
       diag(sim) <- 0
       . <- reshape2::melt(sim)
@@ -1147,7 +1161,7 @@ lnt_diff <- function(x,
 #' @param x An object of class LNToutput.
 #' @param to Which format to convert into. Possible values are "rDNA",
 #'   "corpustools", "tidytext", "tm", "SQLite" and "quanteda".
-#' @param what Either "Articles" or "Paragraph" to use articles or paragraphs as
+#' @param what Either "Articles" or "Paragraphs" to use articles or paragraphs as
 #'   text in the output object.
 #' @param collapse Only has an effect when \code{what = "Articles"}. If set to
 #'   TRUE, an empty line will be added after each paragraphs. Alternatively you
@@ -1214,6 +1228,9 @@ lnt_convert <- function(x,
 #' @rdname lnt_convert
 #' @export
 lnt2rDNA <- function(x, what = "Articles", collapse = TRUE) {
+  if (!what %in% c("Articles", "Paragraphs")) {
+    stop("Choose either \"Articles\" or \"Paragraphs\" as what argument.")
+  }
   if (isTRUE(collapse)) {
     collapse <- "\n\n"
   } else if (is.logical(collapse) && length(collapse) == 1L && !is.na(collapse) && !collapse) {
@@ -1232,7 +1249,7 @@ lnt2rDNA <- function(x, what = "Articles", collapse = TRUE) {
     }
     notes <- paste("ID:", x@meta$ID)
     order <- seq_along(x@meta$ID)
-  } else if (what == "Paragraph") {
+  } else if (what == "Paragraphs") {
     text <- x@paragraphs$Paragraph
     notes <-  paste0("Art_ID: ", x@paragraphs$Art_ID, "; Par_ID", x@paragraphs$Par_ID )
     order <- match(x@paragraphs$Art_ID, x@meta$ID)
@@ -1272,6 +1289,9 @@ lnt2rDNA <- function(x, what = "Articles", collapse = TRUE) {
 #' @export
 #' @importFrom quanteda corpus
 lnt2quanteda <- function(x, what = "Articles", collapse = NULL, ...) {
+  if (!what %in% c("Articles", "Paragraphs")) {
+    stop("Choose either \"Articles\" or \"Paragraphs\" as what argument.")
+  }
   if (isTRUE(collapse)) {
     collapse <- "\n\n"
   } else if (is.logical(collapse) && length(collapse) == 1L && !is.na(collapse) && !collapse) {
@@ -1290,7 +1310,7 @@ lnt2quanteda <- function(x, what = "Articles", collapse = NULL, ...) {
     }
     ID <- x@meta$ID
     meta <- x@meta
-  } else if (what == "Paragraph") {
+  } else if (what == "Paragraphs") {
     text <- x@paragraphs$Paragraph
     ID <- x@paragraphs$Par_ID
     meta <- merge(
@@ -1321,6 +1341,9 @@ lnt2quanteda <- function(x, what = "Articles", collapse = NULL, ...) {
 #' @rdname lnt_convert
 #' @export
 lnt2tm <- function(x, what = "Articles", collapse = NULL, ...) {
+  if (!what %in% c("Articles", "Paragraphs")) {
+    stop("Choose either \"Articles\" or \"Paragraphs\" as what argument.")
+  }
   if (!requireNamespace("tm", quietly = TRUE)) {
     stop("Package \"tm\" is needed for this function to work. Please install it.",
          call. = FALSE)
@@ -1347,7 +1370,7 @@ lnt2tm <- function(x, what = "Articles", collapse = NULL, ...) {
                            x@meta,
                            by.x = "doc_id",
                            by.y = "ID")
-  } else if (what == "Paragraph") {
+  } else if (what == "Paragraphs") {
     df <- data.frame(doc_id = x@paragraphs$Par_ID,
                      text = x@paragraphs$Paragraph,
                      par_id = x@paragraphs$Par_ID)
@@ -1366,6 +1389,9 @@ lnt2tm <- function(x, what = "Articles", collapse = NULL, ...) {
 #' @export
 #' @importFrom methods slot slotNames
 lnt2cptools <- function(x, what = "Articles", collapse = NULL, ...) {
+  if (!what %in% c("Articles", "Paragraphs")) {
+    stop("Choose either \"Articles\" or \"Paragraphs\" as what argument.")
+  }
   if (!requireNamespace("corpustools", quietly = TRUE)) {
     stop("Package \"corpustools\" is needed for this function to work. Please install it.",
          call. = FALSE)
@@ -1388,7 +1414,7 @@ lnt2cptools <- function(x, what = "Articles", collapse = NULL, ...) {
     }
     ID <- x@meta$ID
     meta <- x@meta
-  } else if (what == "Paragraph") {
+  } else if (what == "Paragraphs") {
     text <- x@paragraphs$Paragraph
     ID <- x@paragraphs$Par_ID
     meta <- merge(
@@ -1410,6 +1436,9 @@ lnt2cptools <- function(x, what = "Articles", collapse = NULL, ...) {
 
 
 lnt2tidy <- function(x, what = "Articles", collapse = NULL, ...) {
+  if (!what %in% c("Articles", "Paragraphs")) {
+    stop("Choose either \"Articles\" or \"Paragraphs\" as what argument.")
+  }
   if (!requireNamespace("tidytext", quietly = TRUE)) {
     stop("Package \"tidytext\" is needed for this function to work. Please install it.",
          call. = FALSE)
@@ -1437,7 +1466,7 @@ lnt2tidy <- function(x, what = "Articles", collapse = NULL, ...) {
       output = "Article",
       ...
     )
-  } else if (what == "Paragraph") {
+  } else if (what == "Paragraphs") {
     df <- merge.data.frame(
       x@paragraphs,
       x@meta,
@@ -1469,6 +1498,7 @@ lnt2SQLite <- function(x, file = "LNT.sqlite", ...) {
                           value = slot(x, i),
                           ...)
   }
+  on.exit(RSQLite::dbDisconnect(db))
   return(db)
 }
 

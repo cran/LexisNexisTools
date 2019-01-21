@@ -20,7 +20,7 @@ Install via:
 install.packages("LexisNexisTools")
 ```
 
-Or get the development version by installing directly from github (if you do not have `devtools` yet install it via `install.packages("devtools")` first):
+Or get the development version by installing directly from GitHub (if you do not have `devtools` yet install it via `install.packages("devtools")` first):
 
 ``` r
 devtools::install_github("JBGruber/LexisNexisTools")
@@ -79,7 +79,7 @@ report.df <- lnt_rename(x = my_files, report = TRUE)
 report.df
 ```
 
-    ## in 0.0019 secs
+    ## in 0.0013 secs
 
 | name\_orig | name\_new                               | status  |
 |:-----------|:----------------------------------------|:--------|
@@ -107,22 +107,22 @@ LNToutput <- lnt_read(x = getwd())
 ```
 
     ## Creating LNToutput from input 1 files...
-    ##  ...files loaded [0.0015 secs]
-    ##  ...articles split [0.012 secs]
-    ##  ...lengths extracted [0.013 secs]
-    ##  ...newspapers extracted [0.014 secs]
-    ##  ...dates extracted [0.016 secs]
-    ##  ...authors extracted [0.017 secs]
-    ##  ...sections extracted [0.017 secs]
-    ##  ...editions extracted [0.018 secs]
-    ##  ...headlines extracted [0.018 secs]
-    ##  ...dates converted [0.025 secs]
-    ##  ...metadata extracted [0.029 secs]
-    ##  ...article texts extracted [0.032 secs]
-    ##  ...paragraphs extracted [0.044 secs]
-    ##  ...superfluous whitespace removed from articles [0.047 secs]
-    ##  ...superfluous whitespace removed from paragraphs [0.05 secs]
-    ## Elapsed time: 0.05 secs
+    ##  ...files loaded [0.0012 secs]
+    ##  ...articles split [0.0075 secs]
+    ##  ...lengths extracted [0.008 secs]
+    ##  ...newspapers extracted [0.0083 secs]
+    ##  ...dates extracted [0.01 secs]
+    ##  ...authors extracted [0.011 secs]
+    ##  ...sections extracted [0.011 secs]
+    ##  ...editions extracted [0.011 secs]
+    ##  ...headlines extracted [0.013 secs]
+    ##  ...dates converted [0.019 secs]
+    ##  ...metadata extracted [0.023 secs]
+    ##  ...article texts extracted [0.026 secs]
+    ##  ...paragraphs extracted [0.039 secs]
+    ##  ...superfluous whitespace removed from articles [0.041 secs]
+    ##  ...superfluous whitespace removed from paragraphs [0.044 secs]
+    ## Elapsed time: 0.044 secs
 
 The returned object of class `LNToutput` is intended to be an intermediate container. As it stores articles and paragraphs in two separate data.frames, nested in an S4 object, the relevant text data is stored twice in almost the same format. This has the advantage, that there is no need to use special characters, such as "\\n". However, it makes the files rather big when you save them directly.
 
@@ -137,18 +137,18 @@ paragraphs.df <- LNToutput@paragraphs
 head(meta.df, n = 3)
 ```
 
-<table style="width:100%;">
+<table>
 <colgroup>
 <col width="1%" />
-<col width="14%" />
+<col width="18%" />
+<col width="8%" />
+<col width="5%" />
+<col width="5%" />
 <col width="7%" />
+<col width="7%" />
+<col width="26%" />
+<col width="13%" />
 <col width="4%" />
-<col width="4%" />
-<col width="6%" />
-<col width="6%" />
-<col width="21%" />
-<col width="31%" />
-<col width="3%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -173,7 +173,7 @@ head(meta.df, n = 3)
 <td align="left">355 words</td>
 <td align="left">NA</td>
 <td align="left">Andrew Sparrow</td>
-<td align="left"></td>
+<td align="left">NA</td>
 <td align="left">Lorem ipsum dolor sit amet</td>
 <td align="left">FALSE</td>
 </tr>
@@ -185,7 +185,7 @@ head(meta.df, n = 3)
 <td align="left">927 words</td>
 <td align="left">NA</td>
 <td align="left">Simon Tisdall</td>
-<td align="left"></td>
+<td align="left">NA</td>
 <td align="left">Lorem ipsum dolor sit amet</td>
 <td align="left">FALSE</td>
 </tr>
@@ -198,7 +198,7 @@ head(meta.df, n = 3)
 <td align="left">FEATURES; Pg. 6</td>
 <td align="left">TREVOR Kavanagh</td>
 <td align="left">Edition 1; Scotland</td>
-<td align="left">Edition 1; Scotland Lorem ipsum dolor sit amet</td>
+<td align="left">Lorem ipsum dolor sit amet</td>
 <td align="left">FALSE</td>
 </tr>
 </tbody>
@@ -265,7 +265,7 @@ lnt_diff(duplicates.df, min = 0, max = Inf)
 </p>
 By default, 25 randomly selected articles are displayed one after another, ordered by least to most different within the min and max limits.
 
-After you have chosen a good cutoff value, you can subset the `duplicates.df` data.frame and remove the respective articles:
+After you have chosen a good cut-off value, you can subset the `duplicates.df` data.frame and remove the respective articles:
 
 ``` r
 duplicates.df <- duplicates.df[duplicates.df$rel_dist < 0.2]
@@ -284,20 +284,20 @@ LNToutput[1, ]
     ## # A tibble: 1 x 10
     ##      ID Source_File Newspaper Date       Length Section Author Edition
     ##   <int> <chr>       <chr>     <date>     <chr>  <chr>   <chr>  <chr>  
-    ## 1     1 /home/joha… Guardian… 2010-01-11 355 w… <NA>    Andre… ""     
-    ## # ... with 2 more variables: Headline <chr>, Graphic <lgl>
+    ## 1     1 /home/joha… Guardian… 2010-01-11 355 w… <NA>    Andre… <NA>   
+    ## # … with 2 more variables: Headline <chr>, Graphic <lgl>
     ## # A tibble: 1 x 2
-    ##      ID Article                                                           
-    ##   <int> <chr>                                                             
-    ## 1     1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam la…
+    ##      ID Article                                                            
+    ##   <int> <chr>                                                              
+    ## 1     1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam lac…
     ## # A tibble: 5 x 3
-    ##   Art_ID Par_ID Paragraph                                                 
-    ##    <int>  <int> <chr>                                                     
-    ## 1      1      1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. …
-    ## 2      1      2 Duis eleifend ipsum vehicula nunc luctus vestibulum. Done…
-    ## 3      1      3 Sed ut ex quis nisi interdum ornare quis quis velit. Ut e…
-    ## 4      1      4 Aliquam ut consectetur urna, et dignissim turpis. Ut matt…
-    ## 5      1      5 Fusce sit amet aliquet lorem, id faucibus nisl. Nulla sus…
+    ##   Art_ID Par_ID Paragraph                                                  
+    ##    <int>  <int> <chr>                                                      
+    ## 1      1      1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. E…
+    ## 2      1      2 Duis eleifend ipsum vehicula nunc luctus vestibulum. Donec…
+    ## 3      1      3 Sed ut ex quis nisi interdum ornare quis quis velit. Ut el…
+    ## 4      1      4 Aliquam ut consectetur urna, et dignissim turpis. Ut matti…
+    ## 5      1      5 Fusce sit amet aliquet lorem, id faucibus nisl. Nulla susc…
 
 In this case, writing `[1, ]` delivers an LNToutput object which includes only the first article and the metadata and paragraphs belonging to it.
 
@@ -316,15 +316,15 @@ head(meta.df, n = 3)
 <table style="width:100%;">
 <colgroup>
 <col width="1%" />
-<col width="27%" />
-<col width="5%" />
+<col width="33%" />
+<col width="7%" />
+<col width="4%" />
+<col width="4%" />
+<col width="6%" />
+<col width="6%" />
+<col width="21%" />
+<col width="10%" />
 <col width="3%" />
-<col width="3%" />
-<col width="5%" />
-<col width="5%" />
-<col width="17%" />
-<col width="26%" />
-<col width="2%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -349,7 +349,7 @@ head(meta.df, n = 3)
 <td align="left">355 words</td>
 <td align="left">NA</td>
 <td align="left">Andrew Sparrow</td>
-<td align="left"></td>
+<td align="left">NA</td>
 <td align="left">Lorem ipsum dolor sit amet</td>
 <td align="left">FALSE</td>
 </tr>
@@ -361,7 +361,7 @@ head(meta.df, n = 3)
 <td align="left">927 words</td>
 <td align="left">NA</td>
 <td align="left">Simon Tisdall</td>
-<td align="left"></td>
+<td align="left">NA</td>
 <td align="left">Lorem ipsum dolor sit amet</td>
 <td align="left">FALSE</td>
 </tr>
@@ -374,7 +374,7 @@ head(meta.df, n = 3)
 <td align="left">FEATURES; Pg. 6</td>
 <td align="left">TREVOR Kavanagh</td>
 <td align="left">Edition 1; Scotland</td>
-<td align="left">Edition 1; Scotland Lorem ipsum dolor sit amet</td>
+<td align="left">Lorem ipsum dolor sit amet</td>
 <td align="left">FALSE</td>
 </tr>
 </tbody>
@@ -424,21 +424,21 @@ LNToutput
     ##      ID Source_File Newspaper Date       Length Section Author Edition
     ##   <int> <chr>       <chr>     <date>     <chr>  <chr>   <chr>  <chr>  
     ## 1     9 /home/joha… Sunday M… 2010-01-10 446 w… NEWS; … Ross … 3 Star…
-    ## # ... with 3 more variables: Headline <chr>, Graphic <lgl>, stats <list>
+    ## # … with 3 more variables: Headline <chr>, Graphic <lgl>, stats <list>
     ## # A tibble: 1 x 2
-    ##      ID Article                                                           
-    ##   <int> <chr>                                                             
-    ## 1     9 R is a programming language and free software environment for sta…
+    ##      ID Article                                                            
+    ##   <int> <chr>                                                              
+    ## 1     9 R is a programming language and free software environment for stat…
     ## # A tibble: 7 x 3
-    ##   Art_ID Par_ID Paragraph                                                 
-    ##    <int>  <int> <chr>                                                     
-    ## 1      9     67 R is a programming language and free software environment…
-    ## 2      9     68 R is a GNU package. The source code for the R software en…
-    ## 3      9     69 R is an implementation of the S programming language comb…
-    ## 4      9     70 R was created by Ross Ihaka and Robert Gentleman at the U…
-    ## 5      9     71 R and its libraries implement a wide variety of statistic…
-    ## 6      9     72 Another strength of R is static graphics, which can produ…
-    ## # ... with 1 more row
+    ##   Art_ID Par_ID Paragraph                                                  
+    ##    <int>  <int> <chr>                                                      
+    ## 1      9     67 R is a programming language and free software environment …
+    ## 2      9     68 R is a GNU package. The source code for the R software env…
+    ## 3      9     69 R is an implementation of the S programming language combi…
+    ## 4      9     70 R was created by Ross Ihaka and Robert Gentleman at the Un…
+    ## 5      9     71 R and its libraries implement a wide variety of statistica…
+    ## 6      9     72 Another strength of R is static graphics, which can produc…
+    ## # … with 1 more row
 
 Another use of the function is to find out which versions of your keyword are in the set. You can do so by using regular expressions. The following looks for words starting with the 'stat', followed by more characters, up until the end of the word (the pattern internally always starts and ends at a word boundary).
 

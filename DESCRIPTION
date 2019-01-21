@@ -1,7 +1,7 @@
 Package: LexisNexisTools
 Title: Working with Files from 'LexisNexis'
-Version: 0.2.0
-Date: 2018-09-02
+Version: 0.2.1
+Date: 2019-01-20
 Authors@R: person("Johannes", "Gruber", email = "j.gruber.1@research.gla.ac.uk", 
   role = c("aut", "cre"))
 Description: My PhD supervisor once told me that everyone doing newspaper
@@ -18,14 +18,15 @@ Imports: data.table (>= 1.10.4.3), methods (>= 3.3.0), parallel (>=
         0.9.4.0), stringi (>= 1.1.7), tibble (>= 1.4.0), utils (>=
         3.3.0)
 Suggests: corpustools, covr, diffobj, dplyr, RSQLite, testthat,
-        tidytext, tm, kableExtra, knitr, rmarkdown
+        tidytext, tm, kableExtra, knitr, rmarkdown, spelling
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 VignetteBuilder: knitr
+Language: en-GB
 NeedsCompilation: no
-Packaged: 2018-09-03 14:47:09 UTC; johannes
+Packaged: 2019-01-20 12:16:21 UTC; johannes
 Author: Johannes Gruber [aut, cre]
 Maintainer: Johannes Gruber <j.gruber.1@research.gla.ac.uk>
 Repository: CRAN
-Date/Publication: 2018-09-10 22:50:02 UTC
+Date/Publication: 2019-01-21 19:50:09 UTC
