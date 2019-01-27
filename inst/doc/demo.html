@@ -12,7 +12,7 @@
 
 <meta name="author" content="Johannes B. Gruber" />
 
-<meta name="date" content="2019-01-20" />
+<meta name="date" content="2019-01-27" />
 
 <title>Basic Usage</title>
 
@@ -92,7 +92,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Basic Usage</h1>
 <h4 class="author"><em>Johannes B. Gruber</em></h4>
-<h4 class="date"><em>2019-01-20</em></h4>
+<h4 class="date"><em>2019-01-27</em></h4>
 
 
 
@@ -167,21 +167,21 @@ report.df</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">LNToutput &lt;-<span class="st"> </span><span class="kw">lnt_read</span>(<span class="dt">x =</span> <span class="kw">getwd</span>())
 <span class="co">#&gt; Creating LNToutput from input 1 files...</span>
 <span class="co">#&gt;  ...files loaded [0.0014 secs]</span>
-<span class="co">#&gt;  ...articles split [0.0076 secs]</span>
-<span class="co">#&gt;  ...lengths extracted [0.0082 secs]</span>
-<span class="co">#&gt;  ...newspapers extracted [0.0085 secs]</span>
-<span class="co">#&gt;  ...dates extracted [0.011 secs]</span>
+<span class="co">#&gt;  ...articles split [0.0075 secs]</span>
+<span class="co">#&gt;  ...lengths extracted [0.008 secs]</span>
+<span class="co">#&gt;  ...newspapers extracted [0.0083 secs]</span>
+<span class="co">#&gt;  ...dates extracted [0.01 secs]</span>
 <span class="co">#&gt;  ...authors extracted [0.011 secs]</span>
-<span class="co">#&gt;  ...sections extracted [0.012 secs]</span>
+<span class="co">#&gt;  ...sections extracted [0.011 secs]</span>
 <span class="co">#&gt;  ...editions extracted [0.012 secs]</span>
-<span class="co">#&gt;  ...headlines extracted [0.014 secs]</span>
-<span class="co">#&gt;  ...dates converted [0.02 secs]</span>
-<span class="co">#&gt;  ...metadata extracted [0.024 secs]</span>
-<span class="co">#&gt;  ...article texts extracted [0.027 secs]</span>
-<span class="co">#&gt;  ...paragraphs extracted [0.039 secs]</span>
-<span class="co">#&gt;  ...superfluous whitespace removed from articles [0.041 secs]</span>
-<span class="co">#&gt;  ...superfluous whitespace removed from paragraphs [0.044 secs]</span>
-<span class="co">#&gt; Elapsed time: 0.044 secs</span></code></pre></div>
+<span class="co">#&gt;  ...headlines extracted [0.013 secs]</span>
+<span class="co">#&gt;  ...dates converted [0.019 secs]</span>
+<span class="co">#&gt;  ...metadata extracted [0.022 secs]</span>
+<span class="co">#&gt;  ...article texts extracted [0.025 secs]</span>
+<span class="co">#&gt;  ...paragraphs extracted [0.036 secs]</span>
+<span class="co">#&gt;  ...superfluous whitespace removed from articles [0.039 secs]</span>
+<span class="co">#&gt;  ...superfluous whitespace removed from paragraphs [0.041 secs]</span>
+<span class="co">#&gt; Elapsed time: 0.041 secs</span></code></pre></div>
 <p>The returned object of class <code>LNToutput</code> is intended to be an intermediate container. As it stores articles and paragraphs in two separate data.frames, nested in an S4 object, the relevant text data is stored twice in almost the same format. This has the advantage, that there is no need to use special characters, such as “\n”. However, it makes the files rather big when you save them directly.</p>
 <p>The object can, however, be easily converted to regular data.frames using <code>@</code> to select the data.frame you want:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">meta.df &lt;-<span class="st"> </span>LNToutput<span class="op">@</span>meta
@@ -307,7 +307,7 @@ LNToutput &lt;-<span class="st"> </span>LNToutput[<span class="op">!</span>LNTou
 <span class="co">#&gt; # A tibble: 1 x 10</span>
 <span class="co">#&gt;      ID Source_File Newspaper Date       Length Section Author Edition</span>
 <span class="co">#&gt;   &lt;int&gt; &lt;chr&gt;       &lt;chr&gt;     &lt;date&gt;     &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;  </span>
-<span class="co">#&gt; 1     1 /tmp/RtmpO… Guardian… 2010-01-11 355 w… &lt;NA&gt;    Andre… &lt;NA&gt;   </span>
+<span class="co">#&gt; 1     1 /tmp/RtmpC… Guardian… 2010-01-11 355 w… &lt;NA&gt;    Andre… &lt;NA&gt;   </span>
 <span class="co">#&gt; # … with 2 more variables: Headline &lt;chr&gt;, Graphic &lt;lgl&gt;</span>
 <span class="co">#&gt; # A tibble: 1 x 2</span>
 <span class="co">#&gt;      ID Article                                                            </span>
@@ -360,7 +360,7 @@ paragraphs.df &lt;-<span class="st"> </span>LNToutput<span class="op">@</span>pa
 <tbody>
 <tr class="odd">
 <td align="right">1</td>
-<td align="left">/tmp/RtmpO0SXKu/Rbuild2d0270a11b45/LexisNexisTools/vignettes/SampleFile_20091201-20100511_1-10.txt</td>
+<td align="left">/tmp/RtmpCrhQoW/Rbuild1fd223067a5f/LexisNexisTools/vignettes/SampleFile_20091201-20100511_1-10.txt</td>
 <td align="left">Guardian.com</td>
 <td align="left">2010-01-11</td>
 <td align="left">355 words</td>
@@ -372,7 +372,7 @@ paragraphs.df &lt;-<span class="st"> </span>LNToutput<span class="op">@</span>pa
 </tr>
 <tr class="even">
 <td align="right">2</td>
-<td align="left">/tmp/RtmpO0SXKu/Rbuild2d0270a11b45/LexisNexisTools/vignettes/SampleFile_20091201-20100511_1-10.txt</td>
+<td align="left">/tmp/RtmpCrhQoW/Rbuild1fd223067a5f/LexisNexisTools/vignettes/SampleFile_20091201-20100511_1-10.txt</td>
 <td align="left">Guardian</td>
 <td align="left">2010-01-11</td>
 <td align="left">927 words</td>
@@ -384,7 +384,7 @@ paragraphs.df &lt;-<span class="st"> </span>LNToutput<span class="op">@</span>pa
 </tr>
 <tr class="odd">
 <td align="right">3</td>
-<td align="left">/tmp/RtmpO0SXKu/Rbuild2d0270a11b45/LexisNexisTools/vignettes/SampleFile_20091201-20100511_1-10.txt</td>
+<td align="left">/tmp/RtmpCrhQoW/Rbuild1fd223067a5f/LexisNexisTools/vignettes/SampleFile_20091201-20100511_1-10.txt</td>
 <td align="left">The Sun (England)</td>
 <td align="left">2010-01-11</td>
 <td align="left">677 words</td>
@@ -431,7 +431,7 @@ LNToutput
 <span class="co">#&gt; # A tibble: 1 x 11</span>
 <span class="co">#&gt;      ID Source_File Newspaper Date       Length Section Author Edition</span>
 <span class="co">#&gt;   &lt;int&gt; &lt;chr&gt;       &lt;chr&gt;     &lt;date&gt;     &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;  </span>
-<span class="co">#&gt; 1     9 /tmp/RtmpO… Sunday M… 2010-01-10 446 w… NEWS; … Ross … 3 Star…</span>
+<span class="co">#&gt; 1     9 /tmp/RtmpC… Sunday M… 2010-01-10 446 w… NEWS; … Ross … 3 Star…</span>
 <span class="co">#&gt; # … with 3 more variables: Headline &lt;chr&gt;, Graphic &lt;lgl&gt;, stats &lt;list&gt;</span>
 <span class="co">#&gt; # A tibble: 1 x 2</span>
 <span class="co">#&gt;      ID Article                                                            </span>

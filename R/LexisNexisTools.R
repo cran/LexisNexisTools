@@ -720,6 +720,7 @@ lnt_rename <- function(x,
 #' @importFrom stringdist stringdist
 #' @importFrom reshape2 melt
 #' @importFrom quanteda dfm textstat_simil
+#' @importFrom utils combn
 #' @examples
 #' # Copy sample file to current wd
 #' lnt_sample()
@@ -766,7 +767,6 @@ lnt_similarity <- function(texts,
   if (!length(texts) == length(dates) | !length(dates) == length(IDs)) {
     stop("'texts', 'dates' and 'IDs' need to have the same length.")
   }
-  # get unique dates
   dates.d <- unique(dates)
   dates.d <- dates.d[order(dates.d)]
   if (any(is.na(dates.d))) {
@@ -783,39 +783,43 @@ lnt_similarity <- function(texts,
   }
   if (exists("LNToutput")) rm(LNToutput)
   if (verbose) cat("Checking similiarity for", length(dates), "articles over", length(dates.d), "dates...\n")
-  text.dfm <- quanteda::dfm(texts,
+  text_dfm <- quanteda::dfm(texts,
                             tolower = TRUE,
                             remove = "[^[:alnum:]]",
                             valuetype = "regex",
                             verbose = FALSE)
   if (verbose) cat("\t...quanteda dfm construced for similarity comparison [",
                    format( (Sys.time() - start_time), digits = 2, nsmall = 2), "].", sep = "")
-  text.dfm@Dimnames$docs <- IDs
+  quanteda::docnames(text_dfm) <- as.character(IDs)
   duplicates.df <- lapply(dates.d, function(x){
-    if (length(grep(x, dates)) > 1) {
-      sim <- as.matrix(quanteda::textstat_simil(text.dfm[text.dfm@Dimnames$docs %in%
-                                                           IDs[grep(x, dates)]],
-                                                selection = NULL,
-                                                method = "cosine",
-                                                margin = "documents"))
-      diag(sim) <- 0
-      . <- reshape2::melt(sim)
-      . <- .[.$value > threshold, ]
-      if (nrow(.) > 0){
-        . <- data.frame(t(apply(., 1, sort)))
-        . <- .[!duplicated(.), ]
-        colnames(.) <- c("Similarity", "ID_original", "ID_duplicate")
-        .$text_original <- texts[match(.$ID_original, IDs)]
-        .$text_duplicate <- texts[match(.$ID_duplicate, IDs)]
-        .$Date <- dates[match(.$ID_duplicate, IDs)]
-        duplicates.df <- .[, c("Date",
-                               "ID_original",
-                               "text_original",
-                               "ID_duplicate",
-                               "text_duplicate",
-                               "Similarity")]
-        #
-        if (rel_dist){
+    if (sum(x == na.omit(dates)) > 1) {
+      text_dfm_day <- quanteda::dfm_subset(text_dfm, subset = (dates == x))
+      sim <- quanteda::textstat_simil(
+        text_dfm_day,
+        selection = NULL,
+        method = "cosine",
+        margin = "documents"
+      )
+      . <- t(combn(as.numeric(quanteda::docnames(text_dfm_day)), 2))
+      colnames(.) <- c("ID_original", "ID_duplicate")
+      duplicates.df <- data.frame(
+        .,
+        Similarity = as.numeric(sim),
+        stringsAsFactors = FALSE
+      )
+      duplicates.df <- duplicates.df[duplicates.df$Similarity > threshold, ]
+      if (nrow(duplicates.df) > 0){
+        duplicates.df$text_original <- texts[match(duplicates.df$ID_original, IDs)]
+        duplicates.df$text_duplicate <- texts[match(duplicates.df$ID_duplicate, IDs)]
+        duplicates.df$Date <- dates[match(duplicates.df$ID_duplicate, IDs)]
+        duplicates.df <- duplicates.df[, c("Date",
+                                           "ID_original",
+                                           "text_original",
+                                           "ID_duplicate",
+                                           "text_duplicate",
+                                           "Similarity")]
+
+        if (rel_dist) {
           duplicates.df$rel_dist <- sapply(seq_len(nrow(duplicates.df)), function(i) {
             # length of longer string
             mxln <- max(c(nchar(duplicates.df$text_original[i]), nchar(duplicates.df$text_duplicate[i])))
@@ -848,7 +852,6 @@ lnt_similarity <- function(texts,
           format( (Sys.time() - start_time), digits = 2, nsmall = 2), "]. \t\t", sep = "")
     }
   })
-  #end loop
   duplicates.df <- data.table::rbindlist(duplicates.df)
   class(duplicates.df) <- c(class(duplicates.df), "lnt_sim")
   time.elapsed <- Sys.time() - start_time
@@ -1117,10 +1120,7 @@ lnt_diff <- function(x,
   if (!"lnt_sim" %in% class(x)) {
     warning("'x' should be an object returned by lnt_similarity().")
   }
-  if (!requireNamespace("diffobj", quietly = TRUE)) {
-    stop("Package \"diffobj\" is needed for this function to work. Please install it.",
-         call. = FALSE)
-  }
+  check_install("diffobj")
   if (!"rel_dist" %in% colnames(x)) {
     stop("'x' must contain a column with rel_dist information (see ?lnt_similarity)")
   }
@@ -1173,8 +1173,8 @@ lnt_diff <- function(x,
 #' @details lnt_convert() provides conversion methods into several formats
 #'   commonly used in prominent R packages for text analysis. Besides the
 #'   options set here, the ... (ellipsis) is passed on to the individual methods
-#'   for tuning the outcome: 
-#'   
+#'   for tuning the outcome:
+#'
 #'   * rDNA ... not used.
 #'
 #'   * quanteda ... passed on to [quanteda::corpus()].
@@ -1344,10 +1344,7 @@ lnt2tm <- function(x, what = "Articles", collapse = NULL, ...) {
   if (!what %in% c("Articles", "Paragraphs")) {
     stop("Choose either \"Articles\" or \"Paragraphs\" as what argument.")
   }
-  if (!requireNamespace("tm", quietly = TRUE)) {
-    stop("Package \"tm\" is needed for this function to work. Please install it.",
-         call. = FALSE)
-  }
+  check_install("tm")
   if (isTRUE(collapse)) {
     collapse <- "\n\n"
   } else if (is.logical(collapse) && length(collapse) == 1L && !is.na(collapse) && !collapse) {
@@ -1392,10 +1389,7 @@ lnt2cptools <- function(x, what = "Articles", collapse = NULL, ...) {
   if (!what %in% c("Articles", "Paragraphs")) {
     stop("Choose either \"Articles\" or \"Paragraphs\" as what argument.")
   }
-  if (!requireNamespace("corpustools", quietly = TRUE)) {
-    stop("Package \"corpustools\" is needed for this function to work. Please install it.",
-         call. = FALSE)
-  }
+  check_install("corpustools")
   if (isTRUE(collapse)) {
     collapse <- "\n\n"
   } else if (is.logical(collapse) && length(collapse) == 1L && !is.na(collapse) && !collapse) {
@@ -1439,10 +1433,7 @@ lnt2tidy <- function(x, what = "Articles", collapse = NULL, ...) {
   if (!what %in% c("Articles", "Paragraphs")) {
     stop("Choose either \"Articles\" or \"Paragraphs\" as what argument.")
   }
-  if (!requireNamespace("tidytext", quietly = TRUE)) {
-    stop("Package \"tidytext\" is needed for this function to work. Please install it.",
-         call. = FALSE)
-  }
+  check_install("tidytext")
   if (isTRUE(collapse)) {
     collapse <- "\n\n"
   } else if (is.logical(collapse) && length(collapse) == 1L && !is.na(collapse) && !collapse) {
@@ -1463,7 +1454,7 @@ lnt2tidy <- function(x, what = "Articles", collapse = NULL, ...) {
     tidy <- tidytext::unnest_tokens(
       tbl = df,
       input = "Article",
-      output = "Article",
+      output = "Token",
       ...
     )
   } else if (what == "Paragraphs") {
@@ -1475,7 +1466,7 @@ lnt2tidy <- function(x, what = "Articles", collapse = NULL, ...) {
     tidy <- tidytext::unnest_tokens(
       tbl = df,
       input = "Paragraph",
-      output = "Paragraph",
+      output = "Token",
       ...
     )
   }
@@ -1487,10 +1478,7 @@ lnt2tidy <- function(x, what = "Articles", collapse = NULL, ...) {
 #' @export
 #' @importFrom methods slot slotNames
 lnt2SQLite <- function(x, file = "LNT.sqlite", ...) {
-  if (!requireNamespace("RSQLite", quietly = TRUE)) {
-    stop("Package \"RSQLite\" is needed for this function to work. Please install it.",
-         call. = FALSE)
-  }
+  check_install("RSQLite")
   db <- RSQLite::dbConnect(RSQLite::SQLite(), file)
   for (i in slotNames(x)) {
     RSQLite::dbWriteTable(conn = db,
@@ -1504,6 +1492,35 @@ lnt2SQLite <- function(x, file = "LNT.sqlite", ...) {
 
 
 # Miscellaneous ------------------------------------------------------------
+
+#' Title
+#'
+#' @param pkg
+#'
+#' @noRd
+#'
+#' @importFrom utils install.packages menu
+check_install <- function(pkg) {
+  tested <- try(find.package(pkg), silent = TRUE)
+  if (class(tested)[1] == "try-error") {
+    if (interactive()) {
+      msg <- paste0(
+        "Package \"",
+        pkg,
+        "\" is needed for this function to work. ",
+        "Should I install it for you?"
+      )
+      cat(msg)
+      installchoice <- menu(c("yes", "no"))
+      if (installchoice == 1) install.packages(pkgs = pkg)
+    } else {
+      stop("Package \"", pkg, "\" is needed for this function to work.",
+           " Please install it.",
+           call. = FALSE)
+    }
+  }
+}
+
 
 #' @title Adds or replaces articles
 #'
