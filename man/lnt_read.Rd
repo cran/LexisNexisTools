@@ -2,16 +2,18 @@
 % Please edit documentation in R/LexisNexisTools.R
 \name{lnt_read}
 \alias{lnt_read}
-\title{Read in a LexisNexis TXT file}
+\title{Read in a LexisNexis file}
 \usage{
 lnt_read(x, encoding = "UTF-8", extract_paragraphs = TRUE,
   convert_date = TRUE, start_keyword = "auto", end_keyword = "auto",
-  length_keyword = "^LENGTH: |^LÄNGE: |^LONGUEUR: ",
+  length_keyword = "auto", author_keyword = "AUTOR: |VON |BYLINE: ",
   exclude_lines = "^LOAD-DATE: |^UPDATE: |^GRAFIK: |^GRAPHIC: |^DATELINE: ",
-  recursive = FALSE, verbose = TRUE, ...)
+  recursive = FALSE, file_pattern = ".txt$|.rtf$|.doc$|.pdf$",
+  verbose = TRUE, ...)
 }
 \arguments{
-\item{x}{Name or names of LexisNexis TXT file to be converted.}
+\item{x}{Name(s) of file(s) or one or multiple directories containing files
+from LexisNexis to be converted.}
 
 \item{encoding}{Encoding to be assumed for input files. Defaults to UTF-8
 (the LexisNexis standard value).}
@@ -40,11 +42,15 @@ same way as start_keyword and end_keyword. A common regex would be
 "^LENGTH: " which catches length in all caps at the beginning of the line
 (usually the last line of the metadata).}
 
+\item{author_keyword}{A keyword to identify the author(s) in the metadata.}
+
 \item{exclude_lines}{Lines in which these keywords are found are excluded.
 Set to \code{character()} if you want to turn off this feature.}
 
 \item{recursive}{A logical flag indicating whether subdirectories are
-searched for more TXT files.}
+searched for more files.}
+
+\item{file_pattern}{Pattern of file types to be included in search for files.}
 
 \item{verbose}{A logical flag indicating whether information should be
 printed to the screen.}
@@ -56,8 +62,8 @@ An LNToutput S4 object consisting of 3 data.frames for metadata,
   articles and paragraphs.
 }
 \description{
-Read a LexisNexis TXT file and convert it to a object of class
-\link{LNToutput}.
+Read a file from LexisNexis in a supported format and convert it to an object
+of class \link{LNToutput}. Supported formats are TXT, DOC, RTF and PDF files.
 }
 \details{
 The function can produce an \link{LNToutput} S4 object with two or
@@ -76,7 +82,7 @@ The function can produce an \link{LNToutput} S4 object with two or
   * \code{end_keyword = "^LANGUAGE: |^SPRACHE: |^LANGUE: "}.
 }
 \examples{
-LNToutput <- lnt_read(lnt_sample())
+LNToutput <- lnt_read(lnt_sample(copy = FALSE))
 meta.df <- LNToutput@meta
 articles.df <- LNToutput@articles
 paragraphs.df <- LNToutput@paragraphs

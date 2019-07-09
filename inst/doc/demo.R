@@ -19,61 +19,71 @@ library("LexisNexisTools")
 #  lnt_sample()
 
 ## ---- eval=FALSE---------------------------------------------------------
-#  report.df <- lnt_rename()
+#  report <- lnt_rename()
 
 ## ---- eval=FALSE---------------------------------------------------------
-#  report.df <- lnt_rename(x = getwd(), report = TRUE)
+#  report <- lnt_rename(x = getwd(), report = TRUE)
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  my_files <- list.files(pattern = ".txt", path = getwd(),
 #                         full.names = TRUE, recursive = TRUE, ignore.case = TRUE)
-#  report.df <- lnt_rename(x = my_files, report = TRUE)
+#  report <- lnt_rename(x = my_files, report = TRUE)
 #  
-#  report.df
+#  report
 
 ## ---- echo=FALSE---------------------------------------------------------
 library(kableExtra)
-unlink("SampleFile_20091201-20100511_1-10.txt")
-report.df <- lnt_rename(x = lnt_sample(overwrite = TRUE), simulate = FALSE, report = TRUE, verbose = FALSE)
-report.df$name_orig <- basename(report.df$name_orig)
-report.df$name_new <- basename(report.df$name_new)
-kable(report.df, format = "markdown")
+temp <- paste0(tempfile(), ".TXT")
+file.copy(
+  from = system.file("extdata", "sample.TXT", package = "LexisNexisTools"),
+  to = temp,
+  overwrite = TRUE
+)
 
-## ------------------------------------------------------------------------
-LNToutput <- lnt_read(x = getwd())
+report <- lnt_rename(x = temp, simulate = FALSE, report = TRUE, verbose = FALSE)
+report$name_orig <- "sample.TXT"
+newfile <- report$name_new
+report$name_new <- basename(report$name_new)
+kable(report, format = "markdown")
+
+## ----eval=FALSE----------------------------------------------------------
+#  LNToutput <- lnt_read(x = getwd())
+
+## ----echo=FALSE, message=FALSE-------------------------------------------
+LNToutput <- lnt_read(x = newfile)
 
 ## ---- eval=FALSE---------------------------------------------------------
-#  meta.df <- LNToutput@meta
-#  articles.df <- LNToutput@articles
-#  paragraphs.df <- LNToutput@paragraphs
+#  meta_df <- LNToutput@meta
+#  articles_df <- LNToutput@articles
+#  paragraphs_df <- LNToutput@paragraphs
 #  
 #  # Print meta to get an idea of the data
-#  head(meta.df, n = 3)
+#  head(meta_df, n = 3)
 #  
 
 ## ---- echo=FALSE---------------------------------------------------------
-meta.df <- LNToutput@meta
-articles.df <- LNToutput@articles
-paragraphs.df <- LNToutput@paragraphs
+meta_df <- LNToutput@meta
+articles_df <- LNToutput@articles
+paragraphs_df <- LNToutput@paragraphs
 
-meta.df$Source_File <- basename(meta.df$Source_File)
+meta_df$Source_File <- basename(meta_df$Source_File)
 # Print meta to get an idea of the data
-kable(head(meta.df, n = 3), format = "markdown")
+kable(head(meta_df, n = 3), format = "markdown")
 
 
 ## ---- message=FALSE------------------------------------------------------
 library("dplyr")
-meta_articles.df <- meta.df %>%
-  right_join(articles.df, by = "ID")
+meta_articles_df <- meta_df %>%
+  right_join(articles_df, by = "ID")
 
 # Or keep the paragraphs
-meta_paragraphs.df <- meta.df %>%
-  right_join(paragraphs.df, by = c("ID" = "Art_ID"))
+meta_paragraphs_df <- meta_df %>%
+  right_join(paragraphs_df, by = c("ID" = "Art_ID"))
 
 ## ------------------------------------------------------------------------
-quanteda_corpus <- lnt_convert(LNToutput, to = "rDNA")
+rDNA_docs <- lnt_convert(LNToutput, to = "rDNA")
 
-corpus <- lnt_convert(LNToutput, to = "quanteda")
+quanteda_corpus <- lnt_convert(LNToutput, to = "quanteda")
 
 tCorpus <- lnt_convert(LNToutput, to = "corpustools")
 
@@ -85,42 +95,42 @@ dbloc <- lnt_convert(LNToutput, to = "lnt2SQLite")
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  # Either provide a LNToutput
-#  duplicates.df <- lnt_similarity(LNToutput = LNToutput,
+#  duplicates_df <- lnt_similarity(LNToutput = LNToutput,
 #                                  threshold = 0.97)
 
-## ---- results='hide'-----------------------------------------------------
+## ---- results='hide', message=FALSE--------------------------------------
 # Or the important parts separatley
-duplicates.df <- lnt_similarity(texts = LNToutput@articles$Article,
+duplicates_df <- lnt_similarity(texts = LNToutput@articles$Article,
                                 dates = LNToutput@meta$Date,
                                 IDs = LNToutput@articles$ID,
                                 threshold = 0.97)
 
 
 ## ---- eval=FALSE---------------------------------------------------------
-#  lnt_diff(duplicates.df, min = 0, max = Inf)
+#  lnt_diff(duplicates_df, min = 0, max = Inf)
 
 ## ------------------------------------------------------------------------
-duplicates.df <- duplicates.df[duplicates.df$rel_dist < 0.2]
-LNToutput <- LNToutput[!LNToutput@meta$ID %in% duplicates.df$ID_duplicate, ]
+duplicates_df <- duplicates_df[duplicates_df$rel_dist < 0.2]
+LNToutput <- LNToutput[!LNToutput@meta$ID %in% duplicates_df$ID_duplicate, ]
 
 ## ------------------------------------------------------------------------
 LNToutput[1, ]
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  #' generate new dataframes without highly similar duplicates
-#  meta.df <- LNToutput@meta
-#  articles.df <- LNToutput@articles
-#  paragraphs.df <- LNToutput@paragraphs
+#  meta_df <- LNToutput@meta
+#  articles_df <- LNToutput@articles
+#  paragraphs_df <- LNToutput@paragraphs
 #  
 #  # Print e.g., meta to see how the data changed
-#  head(meta.df, n = 3)
+#  head(meta_df, n = 3)
 
 ## ---- echo=FALSE---------------------------------------------------------
-meta.df <- LNToutput@meta
-articles.df <- LNToutput@articles
-paragraphs.df <- LNToutput@paragraphs
+meta_df <- LNToutput@meta
+articles_df <- LNToutput@articles
+paragraphs_df <- LNToutput@paragraphs
 
-kable(head(meta.df, n = 3), format = "markdown")
+kable(head(meta_df, n = 3), format = "markdown")
 
 ## ------------------------------------------------------------------------
 lnt_lookup(LNToutput, pattern = "statistical computing")
@@ -135,4 +145,7 @@ lnt_lookup(LNToutput, pattern = "stat.*?")
 
 ## ------------------------------------------------------------------------
 table(unlist(lnt_lookup(LNToutput, pattern = "stat.+?\\b")))
+
+## ----echo = FALSE--------------------------------------------------------
+unlink("sample.TXT")
 

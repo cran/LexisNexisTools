@@ -1,9 +1,7 @@
 context("LNToutput methods")
-library(LexisNexisTools)
-
 
 LNToutput <- lnt_read(
-  system.file("extdata", "sample.TXT", package = "LexisNexisTools"), 
+  system.file("extdata", "sample.TXT", package = "LexisNexisTools"),
   verbose = FALSE
 )
 LNToutput@meta$Source_File <- basename(LNToutput@meta$Source_File)
@@ -14,10 +12,12 @@ LNToutput@meta$Source_File <- basename(LNToutput@meta$Source_File)
 # })
 
 test_that("Plus operator", {
-  expect_length({
-    test <- LNToutput + LNToutput
-    test@meta$ID
-  }, n = 20)
+  expect_warning({
+    expect_length({
+      test <- LNToutput + LNToutput
+      test@meta$ID
+    }, n = 20)
+  }, "After objects were merged, there were duplicated IDs. This was fixed.")
 })
 
 test_that("Subset method", {
@@ -47,4 +47,26 @@ test_that("Subset method", {
   }, c("Guardian.com", "The Sun (England)", "The Times (London)",
        "The Times (London)", "The Times (London)",
        "MAIL ON SUNDAY (London)", "Sunday Mirror", "DAILY MAIL (London)"))
+})
+
+test_that("add", {
+  expect_equal({
+    test <- readRDS("../files/LNToutput.RDS")
+    meta <- test@meta
+    meta$Graphic <- NULL
+    test <- lnt_add(test, meta, where = "meta")
+    ncol(test@meta)
+  }, 9)
+})
+
+
+test_that("dim", {
+  expect_equal({
+    test <- readRDS("../files/LNToutput.RDS")
+    dim(test)
+  }, c(
+    Articles = 10,
+    Meta_variable = 10,
+    data.frames = 3
+  ))
 })

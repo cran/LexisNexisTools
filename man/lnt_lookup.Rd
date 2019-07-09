@@ -5,8 +5,8 @@
 \title{Lookup keywords in articles}
 \usage{
 lnt_lookup(x, pattern, case_insensitive = FALSE,
-  unique_pattern = FALSE, word_boundaries = TRUE, cores = NULL,
-  verbose = TRUE)
+  unique_pattern = FALSE, word_boundaries = c("both", "before",
+  "after"), cores = NULL, verbose = TRUE)
 }
 \arguments{
 \item{x}{An LNToutput object or a string or vector of strings.}
@@ -20,9 +20,11 @@ if TRUE, case is ignored during matching.}
 \item{unique_pattern}{If TRUE, duplicated mentions of the same pattern are
 removed.}
 
-\item{word_boundaries}{If TRUE, lookup is performed with word boundaries at
-beginning and end of the pattern (i.e., pattern "protest" will not identify
-"protesters" etc.).}
+\item{word_boundaries}{If TRUE or "both", lookup is performed with word
+boundaries at beginning and end of the pattern (i.e., pattern "protest"
+will not identify "protesters" etc.). Additionally word boundaries can be
+either just in front of the pattern ("before") or after the pattern
+("after"). FALSE searches without word boundaries.}
 
 \item{cores}{The number of CPU cores to use. Use \code{NULL} or \code{1} to
 turn off.}
@@ -31,7 +33,7 @@ turn off.}
 the screen.}
 }
 \value{
-A list keyword hits.
+A list of keyword hits.
 }
 \description{
 This function looks for the provided pattern in the string or
@@ -46,11 +48,13 @@ If an LNToutput object is provided, the function will look for the
 }
 \examples{
 # Make LNToutput object from sample
-LNToutput <- lnt_read(lnt_sample())
+LNToutput <- lnt_read(lnt_sample(copy = FALSE))
 
 # Lookup keywords
-LNToutput@meta$Keyword <- lnt_lookup(LNToutput,
-                                     "statistical computing")
+LNToutput@meta$Keyword <- lnt_lookup(
+  LNToutput,
+  "statistical computing"
+)
 
 # Keep only articles which mention the keyword
 LNToutput_stat <- LNToutput[!sapply(LNToutput@meta$Keyword, is.null)]

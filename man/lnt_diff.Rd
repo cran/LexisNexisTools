@@ -4,7 +4,8 @@
 \alias{lnt_diff}
 \title{Display diff of similar articles}
 \usage{
-lnt_diff(x, min, max, n = 25, output_html = FALSE, ...)
+lnt_diff(x, min = 0.15, max = 0.3, n = 25, output_html = FALSE,
+  ...)
 }
 \arguments{
 \item{x}{lnt_sim object as returned by \link{lnt_similarity}.}
@@ -28,8 +29,10 @@ This function is a wrapper for \link[diffobj]{diffPrint}. It is
 }
 \examples{
 # Test similarity of articles
-duplicates.df <- lnt_similarity(LNToutput = lnt_read(lnt_sample()),
-                                threshold = 0.95)
+duplicates.df <- lnt_similarity(
+  LNToutput = lnt_read(lnt_sample(copy = FALSE)),
+  threshold = 0.97
+)
 
 lnt_diff(duplicates.df, min = 0.18, max = 0.30)
 }
