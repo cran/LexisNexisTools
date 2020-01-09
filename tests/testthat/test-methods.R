@@ -1,15 +1,12 @@
 context("LNToutput methods")
 
-LNToutput <- lnt_read(
-  system.file("extdata", "sample.TXT", package = "LexisNexisTools"),
-  verbose = FALSE
-)
-LNToutput@meta$Source_File <- basename(LNToutput@meta$Source_File)
+LNToutput <- readRDS("../files/LNToutput.RDS")
 
-# test_that("Show method", {
-#   expect_known_output(object = show(LNToutput),
-#                       file = "../files/show")
-# })
+test_that("Show method", {
+  expect_equal(nchar(capture_output(show(LNToutput))),
+               2151,
+               tolerance = 10) # different OS = slightly different printing
+})
 
 test_that("Plus operator", {
   expect_warning({
@@ -26,13 +23,17 @@ test_that("Subset method", {
     test@meta$ID
   }, n = 2)
   expect_equal({
-    test <- LNToutput[c(2:3, 7), "ID"]
+    test <- LNToutput[c(2:3, 7),  j = "ID"]
     test@meta$ID
   }, c(2:3, 7))
   expect_equal({
-    test <- LNToutput[LNToutput@articles$Article[1], "Article"]
+    test <- LNToutput[LNToutput@articles$Article[1], j = "Article"]
     test@articles$Article
   }, LNToutput@articles$Article[1])
+  expect_equal({
+    test <- LNToutput[i = c(2:3, 7), j = "Par_ID"]
+    test@paragraphs$Par_ID
+  }, c(2:3, 7))
   expect_equal({
     test <- LNToutput["Guardian", "Newspaper"]
     test@meta$Newspaper
@@ -47,6 +48,19 @@ test_that("Subset method", {
   }, c("Guardian.com", "The Sun (England)", "The Times (London)",
        "The Times (London)", "The Times (London)",
        "MAIL ON SUNDAY (London)", "Sunday Mirror", "DAILY MAIL (London)"))
+  expect_error(LNToutput["Guardian", "not_valid"],
+               "'j' was not found to be a valid column name.")
+})
+
+
+test_that("+", {
+  expect_equal({
+    suppressWarnings(dim(LNToutput + LNToutput))
+  }, c(Articles = 20, Meta_variable = 10, data.frames = 3))
+  expect_warning(
+    LNToutput + LNToutput,
+    "After objects were merged, there were duplicated IDs. This was fixed."
+  )
 })
 
 test_that("add", {
@@ -57,8 +71,39 @@ test_that("add", {
     test <- lnt_add(test, meta, where = "meta")
     ncol(test@meta)
   }, 9)
+  expect_equal({
+    test <- readRDS("../files/LNToutput.RDS")
+    meta <- test@meta
+    meta$Graphic <- NULL
+    test <- lnt_add(test, meta, where = "meta", replace = FALSE)
+    ncol(test@meta)
+  }, 10)
+  expect_equal({
+    test <- readRDS("../files/LNToutput.RDS")
+    meta <- test@meta
+    meta$ID <- 11:20
+    test <- lnt_add(test, meta, where = "meta")
+    nrow(test@meta)
+  }, 20)
+  expect_warning({
+    test <- readRDS("../files/LNToutput.RDS")
+    meta <- test@meta
+    meta[11, ] <- meta[10, ]
+    meta[11, "ID"] <- 11
+    test <- lnt_add(test, meta, where = "meta")
+  }, "Some or all entries you added have no equivalent in other slots of \"to.\"")
+  expect_equal({
+    test <- readRDS("../files/LNToutput.RDS")
+    paragraphs <- test@paragraphs
+    test <- lnt_add(test, paragraphs, where = "paragraphs")
+    nrow(test@paragraphs)
+  }, 122)
+  expect_error({
+    test <- readRDS("../files/LNToutput.RDS")
+    paragraphs <- test@paragraphs
+    test <- lnt_add(test, paragraphs, where = "test")
+  }, "Choose either 'meta', 'articles' or 'paragraphs' as 'to' argument.")
 })
-
 
 test_that("dim", {
   expect_equal({

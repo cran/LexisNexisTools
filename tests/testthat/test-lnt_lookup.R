@@ -1,8 +1,6 @@
 context("Lookup keyword")
 
-LNToutput <- lnt_read(system.file("extdata", "sample.TXT",
-                                  package = "LexisNexisTools"),
-                      verbose = FALSE)
+LNToutput <- readRDS("../files/LNToutput.RDS")
 
 test_that("Lookup stat. computing in sample", {
   expect_equal(lnt_lookup(LNToutput, "statistical computing", verbose = FALSE),
@@ -55,4 +53,13 @@ test_that("Lookup stat. computing in sample", {
                     `8` = NULL,
                     `9` = c("statis", "statis", "statis", "statis", "statis", "statis"),
                     `10` = NULL))
+})
+
+test_that("Lookup stat. computing in character string", {
+  expect_equal({
+    test <- c("This contains statistical computing",
+              "This does not")
+    names(test) <- 1:2
+    lnt_lookup(test, "statistical computing", verbose = FALSE)
+    }, list(`1` = "statistical computing", `2` = NULL))
 })

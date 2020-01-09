@@ -2,23 +2,35 @@
 % Please edit documentation in R/LexisNexisTools.R
 \name{lnt_convert}
 \alias{lnt_convert}
+\alias{lnt2df}
 \alias{lnt2rDNA}
 \alias{lnt2quanteda}
 \alias{lnt2tm}
 \alias{lnt2cptools}
+\alias{lnt2tidy}
 \alias{lnt2SQLite}
 \title{Convert LNToutput to other formats}
 \usage{
-lnt_convert(x, to = "rDNA", what = "Articles", collapse = FALSE,
-  file = "LNT.sqlite", ...)
+lnt_convert(
+  x,
+  to = "data.frame",
+  what = "articles",
+  collapse = FALSE,
+  file = "LNT.sqlite",
+  ...
+)
 
-lnt2rDNA(x, what = "Articles", collapse = TRUE)
+lnt2df(x, what = "articles", ...)
 
-lnt2quanteda(x, what = "Articles", collapse = NULL, ...)
+lnt2rDNA(x, what = "articles", collapse = TRUE)
 
-lnt2tm(x, what = "Articles", collapse = NULL, ...)
+lnt2quanteda(x, what = "articles", collapse = NULL, ...)
 
-lnt2cptools(x, what = "Articles", collapse = NULL, ...)
+lnt2tm(x, what = "articles", collapse = NULL, ...)
+
+lnt2cptools(x, what = "articles", ...)
+
+lnt2tidy(x, what = "articles", ...)
 
 lnt2SQLite(x, file = "LNT.sqlite", ...)
 }
@@ -28,10 +40,10 @@ lnt2SQLite(x, file = "LNT.sqlite", ...)
 \item{to}{Which format to convert into. Possible values are "rDNA",
 "corpustools", "tidytext", "tm", "SQLite" and "quanteda".}
 
-\item{what}{Either "Articles" or "Paragraphs" to use articles or paragraphs as
+\item{what}{Either "articles" or "paragraphs" to use articles or paragraphs as
 text in the output object.}
 
-\item{collapse}{Only has an effect when \code{what = "Articles"}. If set to
+\item{collapse}{Only has an effect when \code{what = "articles"}. If set to
 TRUE, an empty line will be added after each paragraphs. Alternatively you
 can enter a custom string (such as \code{"\\n"} for newline). \code{NULL}
 or \code{FALSE} turns off this feature.}
@@ -51,7 +63,7 @@ commonly used in prominent R packages for text analysis. Besides the
 options set here, the ... (ellipsis) is passed on to the individual methods
 for tuning the outcome:
 \itemize{
-\item rDNA ... not used.
+\item data.frame, rDNA ... not used.
 \item quanteda ... passed on to \code{\link[quanteda:corpus]{quanteda::corpus()}}.
 \item corpustools ... passed on to \code{\link[corpustools:create_tcorpus]{corpustools::create_tcorpus()}}.
 \item tm ... passed on to \code{\link[tm:Corpus]{tm::Corpus()}}.
@@ -62,15 +74,20 @@ for tuning the outcome:
 \examples{
 LNToutput <- lnt_read(lnt_sample(copy = FALSE))
 
+df <- lnt_convert(LNToutput, to = "data.frame")
+
 docs <- lnt_convert(LNToutput, to = "rDNA")
 
 corpus <- lnt_convert(LNToutput, to = "quanteda")
-
-dbloc <- lnt_convert(LNToutput, to = "lnt2SQLite")
 
 tCorpus <- lnt_convert(LNToutput, to = "corpustools")
 
 tidy <- lnt_convert(LNToutput, to = "tidytext")
 
 Corpus <- lnt_convert(LNToutput, to = "tm")
+
+\dontrun{
+dbloc <- lnt_convert(LNToutput, to = "SQLite") 
+}
+
 }

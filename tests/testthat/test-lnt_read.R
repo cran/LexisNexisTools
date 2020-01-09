@@ -1,7 +1,7 @@
 context("Read sample file")
 
-files <- c(system.file("extdata", "sample.TXT", package = "LexisNexisTools"),
-           system.file("extdata", "sample.TXT", package = "LexisNexisTools"))
+files <- c(lnt_sample(copy = FALSE),
+           lnt_sample(copy = FALSE))
 
 test_that("Read in sample file", {
   expect_equal({
@@ -31,11 +31,11 @@ test_that("Read in sample file", {
 test_that("Read in folder", {
   expect_error({
     lnt_read("../")
-  }, "No .txt or .rtf or .doc or .pdf files found.", fixed = TRUE)
+  }, "No .txt or .rtf or .doc or .pdf or .docx files found.", fixed = TRUE)
   expect_that({
-    test <- lnt_read(dirname(files), 
-                     recursive = TRUE, 
-                     extract_paragraphs = FALSE, 
+    test <- lnt_read(dirname(files),
+                     recursive = TRUE,
+                     extract_paragraphs = FALSE,
                      file_pattern = ".txt$")
     length(test@meta$ID)
   }, is_more_than(19))
