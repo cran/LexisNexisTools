@@ -1,14 +1,14 @@
 Package: LexisNexisTools
 Title: Working with Files from 'LexisNexis'
-Version: 0.3.0
-Date: 2020-01-09
+Version: 0.3.1
+Date: 2020-06-03
 Authors@R: person("Johannes", "Gruber", email = "j.gruber.1@research.gla.ac.uk", 
   role = c("aut", "cre"))
 Description: My PhD supervisor once told me that everyone doing newspaper
     analysis starts by writing code to read in files from the 'LexisNexis' newspaper
     archive (retrieved e.g., from <http://www.nexis.com/> or any of the partner
     sites). However, while this is a nice exercise I do recommend, not everyone has
-    the time. This package takes TXT files downloaded from the newspaper archive of
+    the time. This package takes files downloaded from the newspaper archive of
     'LexisNexis', reads them into R and offers functions for further processing.
 Depends: R (>= 3.5.0)
 License: GPL-3
@@ -23,12 +23,12 @@ Encoding: UTF-8
 LazyData: true
 URL: https://github.com/JBGruber/LexisNexisTools
 BugReports: https://github.com/JBGruber/LexisNexisTools/issues
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 VignetteBuilder: knitr
 Language: en-GB
 NeedsCompilation: no
-Packaged: 2020-01-09 18:57:21 UTC; johannes
+Packaged: 2020-06-03 18:14:06 UTC; johannes
 Author: Johannes Gruber [aut, cre]
 Maintainer: Johannes Gruber <j.gruber.1@research.gla.ac.uk>
 Repository: CRAN
-Date/Publication: 2020-01-09 23:00:03 UTC
+Date/Publication: 2020-06-03 18:40:07 UTC

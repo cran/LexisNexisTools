@@ -99,7 +99,7 @@ test_that("Convert LNToutput to corpustools", {
 # }, "../files/corpustools.RDS")
 
 test_that("Convert LNToutput to tidytext", {
-  expect_equal({
+  expect_equivalent({
     lnt_convert(x = readRDS("../files/LNToutput.RDS"),
                            to = "tidytext", what = "Articles")
   }, readRDS("../files/tidytext.RDS"))
@@ -157,11 +157,11 @@ test_that("Convert LNToutput to SQLite", {
 })
 
 test_that("Test error messages", {
-  expect_error ({
+  expect_error({
     lnt_convert(x = readRDS("../files/LNToutput.RDS"),
                 to = "rDNA", what = "Article")
   }, "Choose either \"articles\" or \"paragraphs\" as what argument.", fixed = TRUE)
-  expect_error ({
+  expect_error({
     lnt_convert(x = readRDS("../files/LNToutput.RDS"),
                 to = "quanteda", what = "Paragraph")
   }, "Choose either \"articles\" or \"paragraphs\" as what argument.", fixed = TRUE)
