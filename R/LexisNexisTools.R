@@ -6,6 +6,8 @@
     packageVersion("LexisNexisTools")
   )
 }
+
+
 # Class and Methods ------------------------------------------------------------
 #' An S4 class to store the three data.frames created with \link{lnt_read}
 #'
@@ -34,6 +36,8 @@ setClass(
     paragraphs = "data.frame"
   )
 )
+
+
 #' Methods for LNToutput output objects
 #'
 #' @param x,object An LNToutput object.
@@ -45,6 +49,8 @@ setClass(
 #' @name LNToutput_methods
 #' @importFrom tibble tibble
 NULL
+
+
 #' @rdname LNToutput_methods
 setMethod("dim",
           signature = "LNToutput",
@@ -60,6 +66,8 @@ setMethod("dim",
             )
           }
 )
+
+
 #' @rdname LNToutput_methods
 setMethod("show",
   signature = "LNToutput",
@@ -72,6 +80,8 @@ setMethod("show",
     print(object@paragraphs, n = 6)
   }
 )
+
+
 #' @rdname LNToutput_methods
 setMethod("[",
   signature = "LNToutput",
@@ -105,6 +115,8 @@ setMethod("[",
     return(x)
   }
 )
+
+
 #' @rdname LNToutput_methods
 setMethod("+",
   signature = c("LNToutput", "LNToutput"),
@@ -132,6 +144,8 @@ setMethod("+",
     return(e1)
   }
 )
+
+
 # Main Functions ------------------------------------------------------------
 #' Read in a LexisNexis file
 #'
@@ -167,6 +181,7 @@ setMethod("+",
 #' @param recursive A logical flag indicating whether subdirectories are
 #'   searched for more files.
 #' @param file_type File types/extensions to be included in search for files.
+#' @param remove_cover Logical. Should the cover page be removed.
 #' @param verbose A logical flag indicating whether information should be
 #'   printed to the screen.
 #' @param ... Additional arguments passed on to \link{lnt_asDate}.
@@ -209,6 +224,7 @@ lnt_read <- function(x,
                      exclude_lines = "^LOAD-DATE: |^UPDATE: |^GRAFIK: |^GRAPHIC: |^DATELINE: ",
                      recursive = FALSE,
                      file_type = c("txt", "rtf", "doc", "pdf", "docx", "zip"),
+                     remove_cover = TRUE,
                      verbose = TRUE,
                      ...) {
   if ("file_pattern" %in% names(list(...))) {
@@ -256,6 +272,7 @@ lnt_read <- function(x,
       exclude_lines = exclude_lines,
       verbose = verbose,
       start_time = start_time,
+      remove_cover = remove_cover,
       ...
     )
   }
@@ -272,6 +289,8 @@ lnt_read <- function(x,
   )
   return(out)
 }
+
+
 #' lnt_parse_nexis
 #'
 #' Internal function to parse lines from nexis.com files.
@@ -566,6 +585,8 @@ lnt_parse_nexis <- function(lines,
   )
   return(out)
 }
+
+
 #' lnt_parse_uni
 #'
 #' Internal function to parse lines from Nexis Uni files.
@@ -587,6 +608,7 @@ lnt_parse_uni <- function(lines,
                           exclude_lines,
                           verbose,
                           start_time,
+                          remove_cover = TRUE,
                           ...) {
   if (end_keyword == "auto") {
     end_keyword <- "^End of Document$"
@@ -606,18 +628,20 @@ lnt_parse_uni <- function(lines,
     lines[grep(exclude_lines, lines)] <- ""
   }
   # remove cover page(s) (which are separated by 2 empty lines)
-  lines <- lapply(unname(split(lines, names(lines))), function(l) {
-    l <- rle(l)
-    if (sum(l$lengths > 2 & l$values == "")) {
-      l$article <- cumsum(l$lengths > 2 & l$values == "")
-      l <- l$values[l$article > min(l$article)] #remove after 1st double blank
-    } else {
-      l <- l$values
-    }
-    l <- l[!l == ""]
-    return(l)
-  })
-  lines <- unlist(lines)
+  if (remove_cover) {
+    lines <- lapply(unname(split(lines, names(lines))), function(l) {
+      l <- rle(l)
+      if (sum(l$lengths > 2 & l$values == "")) {
+        l$article <- cumsum(l$lengths > 2 & l$values == "")
+        l <- l$values[l$article > min(l$article)] #remove before 1st double blank
+      } else {
+        l <- l$values
+      }
+      l <- l[!l == ""]
+      return(l)
+    })
+    lines <- unlist(lines)
+  }
   articles.l <- split(
     lines, cumsum(stringi::stri_detect_regex(lines, end_keyword))
   )
@@ -764,6 +788,8 @@ lnt_parse_uni <- function(lines,
   )
   return(out)
 }
+
+
 #' Assign proper names to LexisNexis files
 #'
 #' Give proper names to files downloaded from 'LexisNexis' based on search
@@ -885,6 +911,8 @@ lnt_rename <- function(x,
   if (simulate) message(" [changes were only simulated]")
   if (report) return(tibble::as_tibble(renamed))
 }
+
+
 lnt_rename_txt <- function(tbl, encoding, simulate, verbose) {
   files <- tbl$name_orig
   for (i in seq_along(files)) {
@@ -955,6 +983,8 @@ lnt_rename_txt <- function(tbl, encoding, simulate, verbose) {
   }
   return(tbl)
 }
+
+
 lnt_rename_docx <- function(tbl, encoding, simulate, verbose) {
   check_install("xml2")
   for (i in seq_along(tbl$name_orig)) {
@@ -1017,6 +1047,8 @@ lnt_rename_docx <- function(tbl, encoding, simulate, verbose) {
   }
   return(tbl)
 }
+
+
 #' Check for highly similar articles.
 #'
 #' Check for highly similar articles by comparing all articles published on the
@@ -1259,6 +1291,8 @@ lnt_similarity <- function(texts,
   attributes(duplicates.df)$call <- call
   return(duplicates.df)
 }
+
+
 #' @title Convert Strings to dates
 #'
 #' @description  Converts dates from string formats common in LexisNexis to a
@@ -1395,6 +1429,8 @@ lnt_asDate <- function(x,
   dat <- as.Date(dat)
   return(dat)
 }
+
+
 #' @title Lookup keywords in articles
 #'
 #' @description This function looks for the provided pattern in the string or
@@ -1452,12 +1488,16 @@ lnt_lookup <- function(x,
                        verbose = TRUE) {
   UseMethod("lnt_lookup")
 }
+
+
 #' @rdname lnt_lookup
 #' @noRd
 #' @export
 lnt_lookup.default <- function(x, ...) {
   stop("'x' must be either a character vector or LNToutput object.")
 }
+
+
 #' @rdname lnt_lookup
 #' @noRd
 #' @export
@@ -1482,6 +1522,8 @@ lnt_lookup.LNToutput <- function(x,
              cores = cores,
              verbose = verbose)
 }
+
+
 #' @rdname lnt_lookup
 #' @noRd
 #' @export
@@ -1492,6 +1534,7 @@ lnt_lookup.character <- function(x,
                                  word_boundaries = c("both", "before", "after"),
                                  cores = NULL,
                                  verbose = TRUE) {
+  
   if (!is.null(word_boundaries) | isFALSE(word_boundaries)) {
     if (word_boundaries[1] == "both" | isTRUE(word_boundaries)) {
       pattern <- paste0(
@@ -1529,9 +1572,8 @@ lnt_lookup.character <- function(x,
     out <- stringi::stri_extract_all_regex(
       str = s,
       pattern = pattern,
-      vectorize_all = TRUE,
-      omit_no_match = FALSE,
       simplify = FALSE,
+      omit_no_match = FALSE,
       opts_regex = stringi::stri_opts_regex(
         case_insensitive = case_insensitive
       )
@@ -1548,6 +1590,8 @@ lnt_lookup.character <- function(x,
   }
   return(return)
 }
+
+
 #' @title Display diff of similar articles
 #'
 #' @description This function is a wrapper for \link[diffobj]{diffPrint}. It is
@@ -1618,6 +1662,8 @@ lnt_diff <- function(x,
     )
   }
 }
+
+
 # Conversion ------------------------------------------------------------
 #' Convert LNToutput to other formats
 #'
@@ -1662,6 +1708,8 @@ lnt_diff <- function(x,
 #' docs <- lnt_convert(LNToutput, to = "rDNA")
 #'
 #' corpus <- lnt_convert(LNToutput, to = "quanteda")
+#' 
+#' \dontrun{
 #'
 #' tCorpus <- lnt_convert(LNToutput, to = "corpustools")
 #'
@@ -1669,7 +1717,6 @@ lnt_diff <- function(x,
 #'
 #' Corpus <- lnt_convert(LNToutput, to = "tm")
 #'
-#' \dontrun{
 #' dbloc <- lnt_convert(LNToutput, to = "SQLite")
 #' }
 #'
@@ -1703,6 +1750,8 @@ lnt_convert <- function(x,
     "tidytext"    = return(lnt2tidy(x, what = what, ...))
   )
 }
+
+
 #' @rdname lnt_convert
 #' @importFrom tibble as_tibble
 #' @export
@@ -1726,6 +1775,8 @@ lnt2df <- function(x, what = "articles", ...) {
   }
   return(as_tibble(df))
 }
+
+
 #' @rdname lnt_convert
 #' @export
 lnt2rDNA <- function(x, what = "articles", collapse = TRUE) {
@@ -1793,6 +1844,8 @@ lnt2rDNA <- function(x, what = "articles", collapse = TRUE) {
   dta[is.na(dta)] <- ""
   return(dta)
 }
+
+
 #' @rdname lnt_convert
 #' @export
 #' @importFrom quanteda corpus metacorpus
@@ -1851,6 +1904,8 @@ lnt2quanteda <- function(x, what = "articles", collapse = NULL, ...) {
   quanteda::metacorpus(dta, names(metacorpus)) <- unname(unlist(unname(metacorpus)))
   return(dta)
 }
+
+
 #' @rdname lnt_convert
 #' @export
 lnt2tm <- function(x, what = "articles", collapse = NULL, ...) {
@@ -1901,6 +1956,8 @@ lnt2tm <- function(x, what = "articles", collapse = NULL, ...) {
   corpus <- tm::Corpus(tm::DataframeSource(df), ...)
   return(corpus)
 }
+
+
 #' @rdname lnt_convert
 #' @export
 #' @importFrom methods slot slotNames
@@ -1934,6 +1991,8 @@ lnt2cptools <- function(x, what = "articles", ...) {
   )
   return(tcorpus)
 }
+
+
 #' @rdname lnt_convert
 #' @export
 lnt2tidy <- function(x, what = "articles", ...) {
@@ -1960,6 +2019,8 @@ lnt2tidy <- function(x, what = "articles", ...) {
   }
   return(tidy)
 }
+
+
 #' @rdname lnt_convert
 #' @export
 #' @importFrom methods slot slotNames
@@ -1977,6 +2038,8 @@ lnt2SQLite <- function(x, file = "LNT.sqlite", ...) {
   on.exit(RSQLite::dbDisconnect(db))
   return(db)
 }
+
+
 #' Convert LNToutput to other formats
 #'
 #' Takes output from \link{lnt_read} and converts chosen articles to a BibTeX
@@ -2024,6 +2087,8 @@ lnt2bibtex <- function(x, art_id, ...) {
     return(out[[1]])
   }
 }
+
+
 # Miscellaneous ------------------------------------------------------------
 #' Title
 #'
@@ -2033,8 +2098,7 @@ lnt2bibtex <- function(x, art_id, ...) {
 #'
 #' @importFrom utils install.packages menu
 check_install <- function(pkg) {
-  tested <- try(find.package(pkg), silent = TRUE)
-  if (class(tested)[1] == "try-error") {
+  if (!requireNamespace(pkg, quietly = TRUE)) {
     if (interactive()) {
       message(
         "Package \"",
@@ -2052,6 +2116,8 @@ check_install <- function(pkg) {
     }
   }
 }
+
+
 #' @title Adds or replaces articles
 #'
 #' @description This functions adds a dataframe to a slot in an LNToutput object
@@ -2153,6 +2219,8 @@ lnt_add <- function(to,
   }
   return(to)
 }
+
+
 #' Provides a small sample TXT/DOCX file
 #'
 #' Copies a small TXT sample file (as used by the old Nexis) or a DOCX (as used
@@ -2214,6 +2282,8 @@ lnt_sample <- function(format = "txt",
   }
   return(to)
 }
+
+
 #' Status message
 #'
 #' Internal function to print status messages
@@ -2231,6 +2301,8 @@ status <- function(m, v, start_time) {
     ), "]")
   }
 }
+
+
 #' Truncate
 #'
 #' Internal function, used to truncate text
@@ -2256,6 +2328,8 @@ trim <- function(x, n, e = "...") {
   x[is.na(x)] <- ""
   return(x)
 }
+
+
 #' Get files
 #'
 #' Find files from LexisNexis in folder(s).
@@ -2332,6 +2406,8 @@ get_files <- function(x,
         " files found.")
   }
 }
+
+
 #' Read files into lines
 #'
 #' Internal function, used read files of differnt formats

@@ -1,4 +1,9 @@
+# LexisNexisTools 0.3.2
+
+* Fixed tests that caused problems on CRAN
+
 # LexisNexisTools 0.3.1
+
 * Added support for last remaining new format (zip).
 * Fixed tests for compliance with dplyr 1.0.0 (dependency through tidytext).
 
