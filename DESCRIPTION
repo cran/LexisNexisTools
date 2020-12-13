@@ -1,7 +1,7 @@
 Package: LexisNexisTools
 Title: Working with Files from 'LexisNexis'
-Version: 0.3.2
-Date: 2020-10-17
+Version: 0.3.3
+Date: 2020-12-12
 Authors@R: person("Johannes", "Gruber", email = "j.gruber.1@research.gla.ac.uk", 
   role = c("aut", "cre"))
 Description: My PhD supervisor once told me that everyone doing newspaper
@@ -13,9 +13,9 @@ Description: My PhD supervisor once told me that everyone doing newspaper
 Depends: R (>= 3.5.0)
 License: GPL-3
 Imports: data.table (>= 1.10.0), methods (>= 3.3.0), parallel (>=
-        3.3.0), pbapply (>= 1.3.4), quanteda (>= 1.1.0), stats (>=
-        3.3.0), stringdist (>= 0.9.4.0), stringi (>= 1.1.7), tibble (>=
-        1.4.0), utils (>= 3.3.0)
+        3.3.0), pbapply (>= 1.3.4), quanteda (>= 1.1.0),
+        quanteda.textstats, stats (>= 3.3.0), stringdist (>= 0.9.4.0),
+        stringi (>= 1.1.7), tibble (>= 1.4.0), utils (>= 3.3.0)
 Suggests: corpustools, covr, diffobj, dplyr, RSQLite, testthat,
         tidytext, tm, kableExtra, knitr, pdftools, rmarkdown, spelling,
         striprtf, xml2
@@ -27,8 +27,8 @@ RoxygenNote: 7.1.1
 VignetteBuilder: knitr
 Language: en-GB
 NeedsCompilation: no
-Packaged: 2020-10-17 11:31:47 UTC; johannes
+Packaged: 2020-12-13 08:57:12 UTC; johannes
 Author: Johannes Gruber [aut, cre]
 Maintainer: Johannes Gruber <j.gruber.1@research.gla.ac.uk>
 Repository: CRAN
-Date/Publication: 2020-10-17 11:50:02 UTC
+Date/Publication: 2020-12-13 09:20:02 UTC
