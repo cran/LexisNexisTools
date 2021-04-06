@@ -1,12 +1,11 @@
 
 # LexisNexisTools
 
-[![Travis-CI Build
-Status](https://travis-ci.org/JBGruber/LexisNexisTools.svg?branch=master)](https://travis-ci.org/JBGruber/LexisNexisTools)
+[![R-CMD-check](https://github.com/JBGruber/LexisNexisTools/workflows/R-CMD-check/badge.svg)](https://github.com/JBGruber/LexisNexisTools/actions)
 [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version-ago/LexisNexisTools)](https://cran.r-project.org/package=LexisNexisTools)
 [![CRAN\_Download\_Badge](http://cranlogs.r-pkg.org/badges/grand-total/LexisNexisTools)](https://cran.r-project.org/package=LexisNexisTools)
-[![Coverage
-Status](https://codecov.io/gh/JBGruber/LexisNexisTools/branch/master/graph/badge.svg)](https://codecov.io/github/JBGruber/LexisNexisTools)
+[![Codecov test
+coverage](https://codecov.io/gh/JBGruber/LexisNexisTools/branch/master/graph/badge.svg)](https://codecov.io/gh/JBGruber/LexisNexisTools?branch=master)
 
 ## Motivation
 
@@ -60,9 +59,9 @@ lnt_sample()
 ‘LexisNexis’ does not give its files proper names. The function
 `lnt_rename()` renames files to a standard format: For TXT files this
 format is “searchTerm\_startDate-endDate\_documentRange.txt” (e.g.,
-“Obama\_20091201-20100511\_1-500.txt”) (for other file types the
-format is similar but depends on what information is available). Note,
-that this will not work if your files lack a cover page with this
+“Obama\_20091201-20100511\_1-500.txt”) (for other file types the format
+is similar but depends on what information is available). Note, that
+this will not work if your files lack a cover page with this
 information. Currently, it seems, like ‘LexisNexis’ only delivers those
 cover pages when you first create a link to your search (“link to this
 search” on the results page), follow this link, and then download the
@@ -75,29 +74,23 @@ from a consistent naming scheme.
 
 There are three ways in which you can rename the files:
 
-  - Run lnt\_rename() directly in your working directory without the x
+-   Run lnt\_rename() directly in your working directory without the x
     argument, which will prompt an option to scan for TXT files in your
     current working directory:
-
-<!-- end list -->
 
 ``` r
 report <- lnt_rename()
 ```
 
-  - Provide a folder path (and set `recursive = TRUE` if you want to
+-   Provide a folder path (and set `recursive = TRUE` if you want to
     scan for files recursively):
-
-<!-- end list -->
 
 ``` r
 report <- lnt_rename(x = getwd(), report = TRUE)
 ```
 
-  - Provide a character object with file names. Use `list.files()` to
+-   Provide a character object with file names. Use `list.files()` to
     search for files in a certain path.
-
-<!-- end list -->
 
 ``` r
 my_files <- list.files(pattern = ".txt", path = getwd(),
@@ -108,7 +101,7 @@ report
 ```
 
 | name\_orig | name\_new                               | status  | type |
-| :--------- | :-------------------------------------- | :------ | :--- |
+|:-----------|:----------------------------------------|:--------|:-----|
 | sample.TXT | SampleFile\_20091201-20100511\_1-10.txt | renamed | txt  |
 
 Using `list.files()` instead of the built-in mechanism allows you to
@@ -134,33 +127,30 @@ some form but can be left to ‘auto’ to use ‘LexisNexis’ defaults in
 several languages. All keywords can be regular expressions and need to
 be in most cases:
 
-  - `start_keyword`: The English default is “\\d+ of \\d+ DOCUMENTS$”
+-   `start_keyword`: The English default is “\\d+ of \\d+ DOCUMENTS$”
     which stands for, for example, “1 of 112 DOCUMENTS”. It is used to
     split up the text in the TXT files into individual articles. You
     will not have to change anything here, except you work with
     documents in languages other than the currently supported.
-  - `end_keyword`: This keyword is used to remove unnecessary
+-   `end_keyword`: This keyword is used to remove unnecessary
     information at the end of an article. Usually, this is “^LANGUAGE:”.
     Where the keyword isn’t found, the additional information ends up in
     the article text.
-  - `length_keyword`: This keyword, which is usually just “^LENGTH:” (or
+-   `length_keyword`: This keyword, which is usually just “^LENGTH:” (or
     its equivalent in other languages) finds the information about the
     length of an article. However, since this is always the last line of
     the metadata, it is used to separate metadata and article text.
     There seems to be only one type of cases where this information is
     missing: if the article consists only of a graphic (which
-    ‘LexisNexis’ does not retrieve). The final output from
-    `lnt_read()` has a column named `Graphic`, which indicates if this
-    keyword was missing. The article text then contains all metadata as
-    well. In these cases, you should remove the whole article after
-    inspecting it. (Use
-    `View(LNToutput@articles$Article[LNToutput@meta$Graphic])` to view
-    these articles in a spreadsheet like viewer.)
+    ‘LexisNexis’ does not retrieve). The final output from `lnt_read()`
+    has a column named `Graphic`, which indicates if this keyword was
+    missing. The article text then contains all metadata as well. In
+    these cases, you should remove the whole article after inspecting
+    it. (Use `View(LNToutput@articles$Article[LNToutput@meta$Graphic])`
+    to view these articles in a spreadsheet like viewer.)
 
 <p align="center">
-
-<a href="https://imgbb.com/MZXXd7z"><img src="https://preview.ibb.co/fOfNdb/LN.png" alt="LN" border="1"></a>
-
+<img src="man/figures/LN.png" width="100%" border="1" />
 </p>
 
 To use the function, you can again provide either file name(s), folder
@@ -208,11 +198,11 @@ paragraphs_df <- LNToutput@paragraphs
 head(meta_df, n = 3)
 ```
 
-| ID | Source\_File                            | Newspaper         | Date       | Length    | Section         | Author          | Edition             | Headline                   | Graphic |
-| -: | :-------------------------------------- | :---------------- | :--------- | :-------- | :-------------- | :-------------- | :------------------ | :------------------------- | :------ |
-|  1 | SampleFile\_20091201-20100511\_1-10.txt | Guardian.com      | 2010-01-11 | 355 words | NA              | Andrew Sparrow  | NA                  | Lorem ipsum dolor sit amet | FALSE   |
-|  2 | SampleFile\_20091201-20100511\_1-10.txt | Guardian          | 2010-01-11 | 927 words | NA              | Simon Tisdall   | NA                  | Lorem ipsum dolor sit amet | FALSE   |
-|  3 | SampleFile\_20091201-20100511\_1-10.txt | The Sun (England) | 2010-01-11 | 677 words | FEATURES; Pg. 6 | TREVOR Kavanagh | Edition 1; Scotland | Lorem ipsum dolor sit amet | FALSE   |
+|  ID | Source\_File                            | Newspaper         | Date       | Length    | Section         | Author          | Edition             | Headline                   | Graphic |
+|----:|:----------------------------------------|:------------------|:-----------|:----------|:----------------|:----------------|:--------------------|:---------------------------|:--------|
+|   1 | SampleFile\_20091201-20100511\_1-10.txt | Guardian.com      | 2010-01-11 | 355 words | NA              | Andrew Sparrow  | NA                  | Lorem ipsum dolor sit amet | FALSE   |
+|   2 | SampleFile\_20091201-20100511\_1-10.txt | Guardian          | 2010-01-11 | 927 words | NA              | Simon Tisdall   | NA                  | Lorem ipsum dolor sit amet | FALSE   |
+|   3 | SampleFile\_20091201-20100511\_1-10.txt | The Sun (England) | 2010-01-11 | 677 words | FEATURES; Pg. 6 | TREVOR Kavanagh | Edition 1; Scotland | Lorem ipsum dolor sit amet | FALSE   |
 
 If you want to keep only one data.frame including metadata and text data
 you can easily do so:
@@ -298,9 +288,7 @@ lnt_diff(duplicates_df, min = 0, max = Inf)
 ```
 
 <p align="center">
-
-<a href="https://imgbb.com/"><img src="https://image.ibb.co/gjXa7J/diff.png" alt="diff" border="1"></a>
-
+<img src="man/figures/diff.png" alt="diff" border="1">
 </p>
 
 By default, 25 randomly selected articles are displayed one after
@@ -320,28 +308,27 @@ regular data.frame using the square brackets.
 
 ``` r
 LNToutput[1, ]
+#> Object of class 'LNToutput':
+#> 1 articles
+#> 5 paragraphs
+#> # A tibble: 1 x 10
+#>      ID Source_File  Newspaper Date       Length Section Author Edition Headline
+#>   <int> <chr>        <chr>     <date>     <chr>  <chr>   <chr>  <chr>   <chr>   
+#> 1     1 SampleFile_… Guardian… 2010-01-11 355 w… <NA>    Andre… <NA>    Lorem i…
+#> # … with 1 more variable: Graphic <lgl>
+#> # A tibble: 1 x 2
+#>      ID Article                                                                 
+#>   <int> <chr>                                                                   
+#> 1     1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam lacinia …
+#> # A tibble: 5 x 3
+#>   Art_ID Par_ID Paragraph                                                       
+#>    <int>  <int> <chr>                                                           
+#> 1      1      1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam …
+#> 2      1      2 Duis eleifend ipsum vehicula nunc luctus vestibulum. Donec non …
+#> 3      1      3 Sed ut ex quis nisi interdum ornare quis quis velit. Ut element…
+#> 4      1      4 Aliquam ut consectetur urna, et dignissim turpis. Ut mattis ele…
+#> 5      1      5 Fusce sit amet aliquet lorem, id faucibus nisl. Nulla suscipit …
 ```
-
-    ## Object of class 'LNToutput':
-    ## 1 articles
-    ## 5 paragraphs
-    ## # A tibble: 1 x 10
-    ##      ID Source_File Newspaper Date       Length Section Author Edition Headline
-    ##   <int> <chr>       <chr>     <date>     <chr>  <chr>   <chr>  <chr>   <chr>   
-    ## 1     1 SampleFile… Guardian… 2010-01-11 355 w… <NA>    Andre… <NA>    Lorem i…
-    ## # … with 1 more variable: Graphic <lgl>
-    ## # A tibble: 1 x 2
-    ##      ID Article                                                                 
-    ##   <int> <chr>                                                                   
-    ## 1     1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam lacinia …
-    ## # A tibble: 5 x 3
-    ##   Art_ID Par_ID Paragraph                                                       
-    ##    <int>  <int> <chr>                                                           
-    ## 1      1      1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam …
-    ## 2      1      2 Duis eleifend ipsum vehicula nunc luctus vestibulum. Donec non …
-    ## 3      1      3 Sed ut ex quis nisi interdum ornare quis quis velit. Ut element…
-    ## 4      1      4 Aliquam ut consectetur urna, et dignissim turpis. Ut mattis ele…
-    ## 5      1      5 Fusce sit amet aliquet lorem, id faucibus nisl. Nulla suscipit …
 
 In this case, writing `[1, ]` delivers an LNToutput object which
 includes only the first article and the metadata and paragraphs
@@ -360,11 +347,11 @@ paragraphs_df <- LNToutput@paragraphs
 head(meta_df, n = 3)
 ```
 
-| ID | Source\_File                            | Newspaper         | Date       | Length    | Section         | Author          | Edition             | Headline                   | Graphic |
-| -: | :-------------------------------------- | :---------------- | :--------- | :-------- | :-------------- | :-------------- | :------------------ | :------------------------- | :------ |
-|  1 | SampleFile\_20091201-20100511\_1-10.txt | Guardian.com      | 2010-01-11 | 355 words | NA              | Andrew Sparrow  | NA                  | Lorem ipsum dolor sit amet | FALSE   |
-|  2 | SampleFile\_20091201-20100511\_1-10.txt | Guardian          | 2010-01-11 | 927 words | NA              | Simon Tisdall   | NA                  | Lorem ipsum dolor sit amet | FALSE   |
-|  3 | SampleFile\_20091201-20100511\_1-10.txt | The Sun (England) | 2010-01-11 | 677 words | FEATURES; Pg. 6 | TREVOR Kavanagh | Edition 1; Scotland | Lorem ipsum dolor sit amet | FALSE   |
+|  ID | Source\_File                            | Newspaper         | Date       | Length    | Section         | Author          | Edition             | Headline                   | Graphic |
+|----:|:----------------------------------------|:------------------|:-----------|:----------|:----------------|:----------------|:--------------------|:---------------------------|:--------|
+|   1 | SampleFile\_20091201-20100511\_1-10.txt | Guardian.com      | 2010-01-11 | 355 words | NA              | Andrew Sparrow  | NA                  | Lorem ipsum dolor sit amet | FALSE   |
+|   2 | SampleFile\_20091201-20100511\_1-10.txt | Guardian          | 2010-01-11 | 927 words | NA              | Simon Tisdall   | NA                  | Lorem ipsum dolor sit amet | FALSE   |
+|   3 | SampleFile\_20091201-20100511\_1-10.txt | The Sun (England) | 2010-01-11 | 677 words | FEATURES; Pg. 6 | TREVOR Kavanagh | Edition 1; Scotland | Lorem ipsum dolor sit amet | FALSE   |
 
 ### Lookup Keywords
 
@@ -376,28 +363,27 @@ different versions of your keyword in the set. Both can be done using
 
 ``` r
 lnt_lookup(LNToutput, pattern = "statistical computing")
+#> $`1`
+#> NULL
+#> 
+#> $`2`
+#> NULL
+#> 
+#> $`3`
+#> NULL
+#> 
+#> $`7`
+#> NULL
+#> 
+#> $`8`
+#> NULL
+#> 
+#> $`9`
+#> [1] "statistical computing" "statistical computing"
+#> 
+#> $`10`
+#> NULL
 ```
-
-    ## $`1`
-    ## NULL
-    ## 
-    ## $`2`
-    ## NULL
-    ## 
-    ## $`3`
-    ## NULL
-    ## 
-    ## $`7`
-    ## NULL
-    ## 
-    ## $`8`
-    ## NULL
-    ## 
-    ## $`9`
-    ## [1] "statistical computing" "statistical computing"
-    ## 
-    ## $`10`
-    ## NULL
 
 The output shows that the keyword pattern was only found in the article
 with ID 9, all other values are `NULL`, which means the keyword wasn’t
@@ -410,30 +396,29 @@ subset it to articles where the list entry is different from `NULL`.
 LNToutput@meta$stats <- lnt_lookup(LNToutput, pattern = "statistical computing")
 LNToutput <- LNToutput[!sapply(LNToutput@meta$stats, is.null), ]
 LNToutput
+#> Object of class 'LNToutput':
+#> 1 articles
+#> 7 paragraphs
+#> # A tibble: 1 x 11
+#>      ID Source_File  Newspaper Date       Length Section Author Edition Headline
+#>   <int> <chr>        <chr>     <date>     <chr>  <chr>   <chr>  <chr>   <chr>   
+#> 1     9 SampleFile_… Sunday M… 2010-01-10 446 w… NEWS; … Ross … 3 Star… R (prog…
+#> # … with 2 more variables: Graphic <lgl>, stats <named list>
+#> # A tibble: 1 x 2
+#>      ID Article                                                                 
+#>   <int> <chr>                                                                   
+#> 1     9 R is a programming language and free software environment for statistic…
+#> # A tibble: 7 x 3
+#>   Art_ID Par_ID Paragraph                                                       
+#>    <int>  <int> <chr>                                                           
+#> 1      9     67 R is a programming language and free software environment for s…
+#> 2      9     68 R is a GNU package. The source code for the R software environm…
+#> 3      9     69 R is an implementation of the S programming language combined w…
+#> 4      9     70 R was created by Ross Ihaka and Robert Gentleman at the Univers…
+#> 5      9     71 R and its libraries implement a wide variety of statistical and…
+#> 6      9     72 Another strength of R is static graphics, which can produce pub…
+#> # … with 1 more row
 ```
-
-    ## Object of class 'LNToutput':
-    ## 1 articles
-    ## 7 paragraphs
-    ## # A tibble: 1 x 11
-    ##      ID Source_File Newspaper Date       Length Section Author Edition Headline
-    ##   <int> <chr>       <chr>     <date>     <chr>  <chr>   <chr>  <chr>   <chr>   
-    ## 1     9 SampleFile… Sunday M… 2010-01-10 446 w… NEWS; … Ross … 3 Star… R (prog…
-    ## # … with 2 more variables: Graphic <lgl>, stats <named list>
-    ## # A tibble: 1 x 2
-    ##      ID Article                                                                 
-    ##   <int> <chr>                                                                   
-    ## 1     9 R is a programming language and free software environment for statistic…
-    ## # A tibble: 7 x 3
-    ##   Art_ID Par_ID Paragraph                                                       
-    ##    <int>  <int> <chr>                                                           
-    ## 1      9     67 R is a programming language and free software environment for s…
-    ## 2      9     68 R is a GNU package. The source code for the R software environm…
-    ## 3      9     69 R is an implementation of the S programming language combined w…
-    ## 4      9     70 R was created by Ross Ihaka and Robert Gentleman at the Univers…
-    ## 5      9     71 R and its libraries implement a wide variety of statistical and…
-    ## 6      9     72 Another strength of R is static graphics, which can produce pub…
-    ## # … with 1 more row
 
 Another use of the function is to find out which versions of your
 keyword are in the set. You can do so by using regular expressions. The
@@ -443,21 +428,19 @@ starts and ends at a word boundary).
 
 ``` r
 lnt_lookup(LNToutput, pattern = "stat.*?")
+#> $`9`
+#> [1] "statistical"   "statisticians" "statistical"   "statistical"  
+#> [5] "statistical"   "statistical"   "static"
 ```
-
-    ## $`9`
-    ## [1] "statistical"   "statisticians" "statistical"   "statistical"  
-    ## [5] "statistical"   "statistical"   "static"
 
 You can use `table()` to count the different versions of patterns:
 
 ``` r
 table(unlist(lnt_lookup(LNToutput, pattern = "stat.+?\\b")))
+#> 
+#>        static   statistical statisticians 
+#>             1             5             1
 ```
-
-    ## 
-    ##        static   statistical statisticians 
-    ##             1             5             1
 
 ## Issues and questions?
 

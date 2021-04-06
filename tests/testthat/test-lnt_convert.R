@@ -86,8 +86,8 @@ test_that("Convert LNToutput to corpustools", {
   expect_equal({
     cptools <- lnt_convert(x = readRDS("../files/LNToutput.RDS"),
                            to = "corpustools", what = "Paragraphs")
-    c(nrow(cptools$get()), class(cptools), length(unique(cptools$get()$doc_id)))
-  }, c("9992", "tCorpus", "R6", "122"))
+    c(class(cptools), length(unique(cptools$get()$doc_id)))
+  }, c("tCorpus", "R6", "122"))
 })
 
 # saveRDS({
@@ -101,15 +101,14 @@ test_that("Convert LNToutput to corpustools", {
 
 test_that("Convert LNToutput to tidytext", {
   skip_if_not_installed("tidytext")
-  expect_equivalent({
-    lnt_convert(x = readRDS("../files/LNToutput.RDS"),
-                           to = "tidytext", what = "Articles")
-  }, readRDS("../files/tidytext.RDS"))
   expect_equal({
     test <- lnt_convert(x = readRDS("../files/LNToutput.RDS"),
                         to = "tidytext", what = "Paragraphs")
-    nrow(test)
-  }, 8587)
+    list(class(test), 
+         length(unique(test)), 
+         length(unique(test$Art_ID)),
+         length(unique(test$Par_ID)))
+  }, list(c("tbl_df", "tbl", "data.frame"), 12L, 10L, 122L))
 })
 
 # saveRDS(lnt_convert(x = readRDS("../files/LNToutput.RDS"),
@@ -154,10 +153,20 @@ test_that("Convert LNToutput to SQLite", {
     conn <- lnt_convert(x = readRDS("../files/LNToutput.RDS"),
                         to = "SQLite", what = "Articles",
                         file = tempf)
+    
+    conn2 <- RSQLite::dbConnect(conn)
+    
+    out <- list(class(conn2), basename(conn2@dbname), 
+                RSQLite::dbListTables(conn2),
+                nrow(RSQLite::dbReadTable(conn2, "meta")),
+                nrow(RSQLite::dbReadTable(conn2, "paragraphs")))
+    
+    RSQLite::dbDisconnect(conn2)
     unlink(tempf)
-    conn@dbname <- basename(conn@dbname)
-    conn
-  }, readRDS("../files/SQLite.RDS"))
+    
+    out
+  }, list(structure("SQLiteConnection", package = "RSQLite"), "LNT.sqlite", 
+          c("articles", "meta", "paragraphs"), 10L, 122L))
 })
 
 test_that("Test error messages", {

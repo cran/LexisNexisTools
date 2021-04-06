@@ -1,7 +1,7 @@
 Package: LexisNexisTools
 Title: Working with Files from 'LexisNexis'
-Version: 0.3.3
-Date: 2020-12-12
+Version: 0.3.4
+Date: 2021-04-06
 Authors@R: person("Johannes", "Gruber", email = "j.gruber.1@research.gla.ac.uk", 
   role = c("aut", "cre"))
 Description: My PhD supervisor once told me that everyone doing newspaper
@@ -20,15 +20,14 @@ Suggests: corpustools, covr, diffobj, dplyr, RSQLite, testthat,
         tidytext, tm, kableExtra, knitr, pdftools, rmarkdown, spelling,
         striprtf, xml2
 Encoding: UTF-8
-LazyData: true
 URL: https://github.com/JBGruber/LexisNexisTools
 BugReports: https://github.com/JBGruber/LexisNexisTools/issues
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
 Language: en-GB
 NeedsCompilation: no
-Packaged: 2020-12-13 08:57:12 UTC; johannes
+Packaged: 2021-04-06 13:47:48 UTC; johannes
 Author: Johannes Gruber [aut, cre]
 Maintainer: Johannes Gruber <j.gruber.1@research.gla.ac.uk>
 Repository: CRAN
-Date/Publication: 2020-12-13 09:20:02 UTC
+Date/Publication: 2021-04-06 14:50:06 UTC
