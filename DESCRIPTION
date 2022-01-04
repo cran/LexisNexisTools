@@ -1,8 +1,8 @@
 Package: LexisNexisTools
 Title: Working with Files from 'LexisNexis'
-Version: 0.3.4
-Date: 2021-04-06
-Authors@R: person("Johannes", "Gruber", email = "j.gruber.1@research.gla.ac.uk", 
+Version: 0.3.5
+Date: 2022-01-04
+Authors@R: person("Johannes", "Gruber", email = "Gruber@europa-uni.de", 
   role = c("aut", "cre"))
 Description: My PhD supervisor once told me that everyone doing newspaper
     analysis starts by writing code to read in files from the 'LexisNexis' newspaper
@@ -22,12 +22,12 @@ Suggests: corpustools, covr, diffobj, dplyr, RSQLite, testthat,
 Encoding: UTF-8
 URL: https://github.com/JBGruber/LexisNexisTools
 BugReports: https://github.com/JBGruber/LexisNexisTools/issues
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 VignetteBuilder: knitr
 Language: en-GB
 NeedsCompilation: no
-Packaged: 2021-04-06 13:47:48 UTC; johannes
+Packaged: 2022-01-04 14:59:04 UTC; johannes
 Author: Johannes Gruber [aut, cre]
-Maintainer: Johannes Gruber <j.gruber.1@research.gla.ac.uk>
+Maintainer: Johannes Gruber <Gruber@europa-uni.de>
 Repository: CRAN
-Date/Publication: 2021-04-06 14:50:06 UTC
+Date/Publication: 2022-01-04 16:00:04 UTC

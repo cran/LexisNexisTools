@@ -1,14 +1,14 @@
-a0bb3e5eaf8ea29f54c5c4b31a5cc921 *DESCRIPTION
+d4df980a9e82972ade094b4e8a3c62f6 *DESCRIPTION
 0fb1a680caed57a38bd159167027a2a0 *NAMESPACE
-283b31f941b338a57aafab4425b96575 *NEWS.md
-26a2ad83b25f02e255a81f2e391cbcac *R/LexisNexisTools.R
-72d040800e5d62d47cb47fe0f5e19d67 *README.md
-feac1140c60a4930d6966f8889d59eff *build/vignette.rds
-085978e7fae4dae85974272c8b90849b *inst/CITATION
+6ff07a9fc2a848ee78fd941de23538af *NEWS.md
+ca1dd0080325d280ad64a2ce2ff02436 *R/LexisNexisTools.R
+84e4de623bb940d3098a472a8429609a *README.md
+b9ab10820bbb8dd076bf505c9d6f8bd1 *build/vignette.rds
+14bec64d799a1a99d8f8d3709dd59ecd *inst/CITATION
 b60a956989788060cf486235570894d8 *inst/WORDLIST
 95dff5d2fe4e8e1063dbfa55e8e31334 *inst/doc/demo.R
-8f6419e2e218ff2ab58dc6f27ace9574 *inst/doc/demo.Rmd
-75aac2c8fdf35ba1b4d6dd59dcfb7c58 *inst/doc/demo.html
+0fb15f729d412d393059a92cbca6cab3 *inst/doc/demo.Rmd
+c4ab841961a060538bba61057c518252 *inst/doc/demo.html
 863a83bbc42216e5a5d10b45b040edcf *inst/extdata/sample.DOCX
 5f19e4856b888721575b395347cc867c *inst/extdata/sample.TXT
 8bc12f474cf37c249251cb08c4b02f9c *man/LNToutput.Rd
@@ -41,7 +41,7 @@ ec9141294792511fe74a16788f62684c *tests/files/tm.RDS
 a9a339427c84232a90a5f65d4b29d7bd *tests/testthat.R
 e04e4d142c63a5a4aee9dcdc3f2768f4 *tests/testthat/test-internal.R
 be643bb2a5ef53a06c6d9f296a06ba05 *tests/testthat/test-lnt_asDate.R
-7c5b1566abc71844b2565841100aea1e *tests/testthat/test-lnt_convert.R
+2858d27b6f30acd71615ab9846026316 *tests/testthat/test-lnt_convert.R
 5225ba0bdd0dbe869cd827a9148919f1 *tests/testthat/test-lnt_diff.R
 9938d8a7706c1d1c43e042fc0920e835 *tests/testthat/test-lnt_lookup.R
 84a73920f3d5963ef304e326b67ea820 *tests/testthat/test-lnt_read.R
@@ -50,4 +50,4 @@ be643bb2a5ef53a06c6d9f296a06ba05 *tests/testthat/test-lnt_asDate.R
 c488f1a073ba7369bb1a1c4a166cffc3 *tests/testthat/test-lnt_sample.R
 74231af93a81cf8cd09beda93dfa5ad0 *tests/testthat/test-lnt_similarity.R
 0e271cf672166bef785e480efe7c7b4e *tests/testthat/test-methods.R
-8f6419e2e218ff2ab58dc6f27ace9574 *vignettes/demo.Rmd
+0fb15f729d412d393059a92cbca6cab3 *vignettes/demo.Rmd
