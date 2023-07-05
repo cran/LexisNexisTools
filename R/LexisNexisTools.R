@@ -45,6 +45,8 @@ setClass(
 #' @param j The column you want to use to subset the LNToutput object. Takes
 #'   character strings.
 #' @param invert Invert the selection of i.
+#' @param ... not used.
+#' @param drop not used (it's here so tests do not complain).
 #' @param e1,e2 LNToutput objects which will be combined.
 #' @name LNToutput_methods
 #' @importFrom tibble tibble
@@ -85,7 +87,7 @@ setMethod("show",
 #' @rdname LNToutput_methods
 setMethod("[",
   signature = "LNToutput",
-  definition = function(x, i, j, invert = FALSE) {
+  definition = function(x, i, j, invert = FALSE, ..., drop = TRUE) {
     if (missing(j)) {
       x@meta <- x@meta[i, ]
       x@articles <- x@articles[i, ]
@@ -2400,7 +2402,7 @@ get_files <- function(x,
     zips <- tolower(tools::file_ext(files)) == "zip"
     if (any(zips)) {
       temp <- paste0(tempdir(), "/zips")
-      unzip(files[zips], exdir = temp)
+      lapply(files[zips], unzip, exdir = temp)
       files <- c(files[!zips],
                  get_files(temp))
     }

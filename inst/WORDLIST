@@ -3,6 +3,7 @@ Codecov
 LNToutput
 Levenshtein
 LexisNexis
+LexisNexis’
 Lorem
 Nexis
 Pg
@@ -11,6 +12,7 @@ SampleFile
 Tisdall
 amet
 asDate
+auto’
 checkFiles
 com
 corpustools
@@ -33,6 +35,7 @@ sim
 simil
 startDate
 stat
+stat’
 stringdist
 testthat
 textstat
