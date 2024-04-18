@@ -1,3 +1,9 @@
+# LexisNexisTools 1.0.0
+
+* Fixes issue in tests
+* articles parse from Nexis Uni now feature proper line breaks
+* start removing classification data that comes from nexis
+
 # LexisNexisTools 0.3.7
 
 * Fixes issue in tests

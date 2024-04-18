@@ -5,26 +5,26 @@ knitr::opts_chunk$set(
 )
 library("kableExtra")
 
-## ---- message=FALSE-----------------------------------------------------------
+## ----message=FALSE------------------------------------------------------------
 library("LexisNexisTools")
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  lnt_sample()
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  report <- lnt_rename()
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  report <- lnt_rename(x = getwd(), report = TRUE)
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  my_files <- list.files(pattern = ".txt", path = getwd(),
 #                         full.names = TRUE, recursive = TRUE, ignore.case = TRUE)
 #  report <- lnt_rename(x = my_files, report = TRUE)
 #  
 #  report
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 library(kableExtra)
 temp <- paste0(tempfile(), ".TXT")
 silent <- file.copy(
@@ -46,7 +46,7 @@ kable(report, format = "markdown")
 LNToutput <- lnt_read(x = newfile)
 LNToutput@meta$Source_File <- basename(LNToutput@meta$Source_File)
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  meta_df <- LNToutput@meta
 #  articles_df <- LNToutput@articles
 #  paragraphs_df <- LNToutput@paragraphs
@@ -55,7 +55,7 @@ LNToutput@meta$Source_File <- basename(LNToutput@meta$Source_File)
 #  head(meta_df, n = 3)
 #  
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 meta_df <- LNToutput@meta
 articles_df <- LNToutput@articles
 paragraphs_df <- LNToutput@paragraphs
@@ -65,7 +65,7 @@ meta_df$Source_File <- basename(meta_df$Source_File)
 kable(head(meta_df, n = 3), format = "markdown")
 
 
-## ---- message=FALSE-----------------------------------------------------------
+## ----message=FALSE------------------------------------------------------------
 meta_articles_df <- lnt_convert(LNToutput, to = "data.frame")
 
 # Or keep the paragraphs
@@ -84,12 +84,12 @@ meta_paragraphs_df <- lnt_convert(LNToutput, to = "data.frame", what = "Paragrap
 #  
 #  dbloc <- lnt_convert(LNToutput, to = "SQLite")
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  # Either provide a LNToutput
 #  duplicates_df <- lnt_similarity(LNToutput = LNToutput,
 #                                  threshold = 0.97)
 
-## ---- results='hide', message=FALSE-------------------------------------------
+## ----results='hide', message=FALSE--------------------------------------------
 # Or the important parts separatley
 duplicates_df <- lnt_similarity(texts = LNToutput@articles$Article,
                                 dates = LNToutput@meta$Date,
@@ -97,7 +97,7 @@ duplicates_df <- lnt_similarity(texts = LNToutput@articles$Article,
                                 threshold = 0.97)
 
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  lnt_diff(duplicates_df, min = 0, max = Inf)
 
 ## -----------------------------------------------------------------------------
@@ -107,7 +107,7 @@ LNToutput <- LNToutput[!LNToutput@meta$ID %in% duplicates_df$ID_duplicate, ]
 ## -----------------------------------------------------------------------------
 LNToutput[1, ]
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  #' generate new dataframes without highly similar duplicates
 #  meta_df <- LNToutput@meta
 #  articles_df <- LNToutput@articles
@@ -116,7 +116,7 @@ LNToutput[1, ]
 #  # Print e.g., meta to see how the data changed
 #  head(meta_df, n = 3)
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 meta_df <- LNToutput@meta
 articles_df <- LNToutput@articles
 paragraphs_df <- LNToutput@paragraphs

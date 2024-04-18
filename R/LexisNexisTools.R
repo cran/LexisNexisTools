@@ -184,6 +184,8 @@ setMethod("+",
 #'   searched for more files.
 #' @param file_type File types/extensions to be included in search for files.
 #' @param remove_cover Logical. Should the cover page be removed.
+#' @param remove_classification Logical. Should the classification provided by 
+#'   LexisNexis be removed?
 #' @param verbose A logical flag indicating whether information should be
 #'   printed to the screen.
 #' @param ... Additional arguments passed on to \link{lnt_asDate}.
@@ -227,6 +229,7 @@ lnt_read <- function(x,
                      recursive = FALSE,
                      file_type = c("txt", "rtf", "doc", "pdf", "docx", "zip"),
                      remove_cover = TRUE,
+                     remove_classification = TRUE,
                      verbose = TRUE,
                      ...) {
   if ("file_pattern" %in% names(list(...))) {
@@ -275,6 +278,7 @@ lnt_read <- function(x,
       verbose = verbose,
       start_time = start_time,
       remove_cover = remove_cover,
+      remove_classification = remove_classification,
       ...
     )
   }
@@ -328,7 +332,7 @@ lnt_parse_nexis <- function(lines,
   status("\t...files loaded", verbose, start_time)
   # exclude some lines
   if (length(exclude_lines) > 0) {
-    lines[grep("^LOAD-DATE: |^UPDATE: |^GRAFIK: |^GRAPHIC: |^DATELINE: ", lines)] <- ""
+    lines[grep(exclude_lines, lines)] <- ""
   }
   articles.l <- split(
     lines, cumsum(stringi::stri_detect_regex(lines, start_keyword))
@@ -611,6 +615,7 @@ lnt_parse_uni <- function(lines,
                           verbose,
                           start_time,
                           remove_cover,
+                          remove_classification,
                           ...) {
   if (end_keyword == "auto") {
     end_keyword <- "^End of Document$"
@@ -683,6 +688,18 @@ lnt_parse_uni <- function(lines,
     }
   })
   status("\t...articles split", verbose, start_time)
+  # remove classification
+  if (remove_classification) {
+    df.l <- lapply(df.l, function(a) {
+      cls_pos <- tail(grep("^Classification$", a$article), 1L)
+      if (length(cls_pos) > 0) {
+        a$article <- a$article[1:cls_pos - 1]
+      }
+      return(a)
+    })
+  }
+  
+  
   # make data.frame
   ### length
   len <- vapply(df.l, FUN.VALUE = character(1), function(i) {
@@ -780,7 +797,7 @@ lnt_parse_uni <- function(lines,
   Paragraph <- NULL
   Art_ID <- NULL
   articles.df <- paragraphs.df[,
-                               list(Article = stri_join(Paragraph, collapse = " ")),
+                               list(Article = stri_join(Paragraph, collapse = "\n")),
                                by = list(ID = Art_ID)]
   articles.df <- tibble::as_tibble(articles.df)
   paragraphs.df <- tibble::as_tibble(paragraphs.df)
